@@ -1459,58 +1459,87 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
       <span class="kicker">— detail &amp; diagnostic charts</span>
     </div>
 
-    <details class="lm2-detail" id="lm2-detail-nutrition">
+    <!-- ────────────────── 🥗 NUTRITION DETAIL ────────────────── -->
+    <details class="lm2-detail" id="lm2-detail-nutrition" open>
       <summary>🥗 Nutrition detail <span class="sub">intake · surplus · protein over time</span><span class="count">3 charts</span></summary>
       <div class="lm2-detail-body">
-        <div class="note">
-          Full detail charts (Intake vs TDEE · Daily surplus/deficit · Daily protein)
-          currently live on the <a href="#" onclick="activateTab('leanmass');return false;">Lean Mass tab</a>.
-          Click to switch.
-        </div>
-        <div class="mini-list">
-          <div class="mini"><h5>Intake vs TDEE</h5><p>Daily · Lose It! intake vs RMR + Active + TEF</p></div>
-          <div class="mini"><h5>Daily surplus / deficit</h5><p>bars = daily kcal · rolling avg lines · right axis = 7d weight</p></div>
-          <div class="mini" style="grid-column:1/-1;"><h5>Daily protein</h5><p>target = 1.2 g / lb body weight (moves with weight)</p></div>
+        <div class="grid">
+          <div class="card card-wide">
+            <h3>Intake vs TDEE <span class="sub">Daily · Lose It! intake vs RMR + Active + TEF</span></h3>
+            <div class="chart-wrap tall"><canvas id="ch-lm2-intake-tdee"></canvas></div>
+          </div>
+          <div class="card card-wide">
+            <h3>Daily surplus / deficit <span class="sub">bars = daily kcal · rolling avg lines · right axis = 7d weight</span></h3>
+            <div class="chart-wrap extra-tall"><canvas id="ch-lm2-surplus-daily"></canvas></div>
+          </div>
+          <div class="card card-wide">
+            <h3>Daily protein <span class="sub">target = 1.2 g / lb body weight (moves with weight)</span></h3>
+            <div class="chart-wrap tall"><canvas id="ch-lm2-protein"></canvas></div>
+          </div>
         </div>
       </div>
     </details>
 
+    <!-- ────────────────── 🏋️ TRAINING DETAIL ────────────────── -->
     <details class="lm2-detail" id="lm2-detail-training">
-      <summary>🏋️ Training detail <span class="sub">sets · heatmap · progressive overload</span><span class="count">4 charts</span></summary>
+      <summary>🏋️ Training detail <span class="sub">sets · heatmap</span><span class="count">3 charts</span></summary>
       <div class="lm2-detail-body">
-        <div class="note">
-          Full detail charts (Total sets · Hard sets · Muscle heatmap · Progressive overload)
-          currently live on the <a href="#" onclick="activateTab('leanmass');return false;">Lean Mass tab</a>.
-          Click to switch.
-        </div>
-        <div class="mini-list">
-          <div class="mini"><h5>Total sets per week</h5><p>all working sets · last 26 weeks</p></div>
-          <div class="mini"><h5>Hard sets per week</h5><p>rep-threshold slider · adjustable cutoff</p></div>
-          <div class="mini"><h5>Muscle × week heatmap</h5><p>12 weeks · 9 muscle groups · total vs hard sets</p></div>
-          <div class="mini"><h5>Progressive overload</h5><p>1RM trendline per muscle · per-exercise detail</p></div>
+        <div class="grid">
+          <div class="card card-wide">
+            <h3>Total sets per week <span class="sub">all working sets (drop/warmup excluded) · last 26 weeks</span></h3>
+            <div class="chart-wrap tall"><canvas id="ch-lm2-total-sets"></canvas></div>
+          </div>
+          <div class="card card-wide">
+            <h3>Hard sets per week <span class="sub">reps &lt; <strong id="lm2-hardset-thresh-label">15</strong> · threshold controlled on Lean Mass tab</span></h3>
+            <div class="chart-wrap tall"><canvas id="ch-lm2-hard-sets"></canvas></div>
+          </div>
+          <div class="card card-wide">
+            <h3>Muscle group × week heatmap <span class="sub">12 weeks · 9 muscle groups · current mode/threshold set on Lean Mass tab</span></h3>
+            <div id="lm2-heatmap" class="lm-heatmap">
+              <!-- populated by renderTrainingHeatmap('lm2-heatmap', false) -->
+            </div>
+            <div class="lm-heatmap-legend">
+              <span class="sw empty"></span><span>0 sets</span>
+              <span class="sw lo"></span><span>low</span>
+              <span class="sw mid"></span><span>mid</span>
+              <span class="sw hi"></span><span>high</span>
+            </div>
+          </div>
         </div>
       </div>
     </details>
 
+    <!-- ────────────────── 💤 RECOVERY DETAIL ────────────────── -->
     <details class="lm2-detail" id="lm2-detail-recovery">
       <summary>💤 Recovery detail <span class="sub">HRV · sleep · WHOOP recovery</span><span class="count">4 charts</span></summary>
       <div class="lm2-detail-body">
-        <div class="note">
-          Full detail charts (HRV · Sleep scores · Sleep duration · WHOOP recovery)
-          currently live on the <a href="#" onclick="activateTab('leanmass');return false;">Lean Mass tab</a>.
-          Click to switch.
-        </div>
-        <div class="mini-list">
-          <div class="mini"><h5>HRV trend</h5><p>WHOOP primary · Apple Health fallback · 7/14d rolling</p></div>
-          <div class="mini"><h5>Sleep score overlay</h5><p>WHOOP sleep performance + Oura sleep score</p></div>
-          <div class="mini"><h5>Sleep duration</h5><p>WHOOP primary · daily bars + 7d rolling · 7.5h reference</p></div>
-          <div class="mini"><h5>WHOOP recovery %</h5><p>zone bands: ≤33 red · 34–66 yellow · ≥67 green</p></div>
+        <div class="grid">
+          <div class="card card-wide">
+            <h3>HRV trend <span class="sub">WHOOP primary · Apple Health fallback · 7/14d rolling</span></h3>
+            <div class="chart-wrap tall"><canvas id="ch-lm2-hrv"></canvas></div>
+          </div>
+          <div class="card card-wide">
+            <h3>Sleep score overlay <span class="sub">WHOOP sleep performance + Oura sleep score</span></h3>
+            <div class="chart-wrap tall"><canvas id="ch-lm2-sleep-scores"></canvas></div>
+          </div>
+          <div class="card card-wide">
+            <h3>Sleep duration vs 7.5h reference <span class="sub">WHOOP primary · daily bars + 7d rolling</span></h3>
+            <div class="chart-wrap tall"><canvas id="ch-lm2-sleep-duration"></canvas></div>
+          </div>
+          <div class="card card-wide">
+            <h3>WHOOP recovery % <span class="sub">zone bands: ≤33 red · 34–66 yellow · ≥67 green</span></h3>
+            <div class="chart-wrap tall"><canvas id="ch-lm2-recovery"></canvas></div>
+            <div class="lm-recovery-zones" id="lm2-recovery-zones">
+              <!-- populated by renderRecoveryRecovery() -->
+            </div>
+            <div class="lm-recovery-zones-caption" id="lm2-recovery-zones-caption"></div>
+          </div>
         </div>
       </div>
     </details>
 
     <div class="lm2-jump">
-      <span>Want to see the full detail charts right now?</span>
+      <span>Want the full interactive controls (hard-set slider · heatmap mode · PO threshold)?</span>
       <button onclick="activateTab('leanmass')">Open Lean Mass tab →</button>
     </div>
 
@@ -4145,7 +4174,8 @@ function renderLeanMassWeeklyBar(canvasId, deltasKg, mean4Kg, mean12Kg, kind, ba
    Intake+ 3,526). Now both charts render raw daily values so a spot-check
    between them is always apples-to-apples. The 7d-rolling caveat in the
    Surplus tooltip was removed since the two charts are now consistent. */
-function renderLeanMassIntakeTDEE(){
+function renderLeanMassIntakeTDEE(canvasId){
+  canvasId = canvasId || 'ch-lm-intake-tdee';
   const e = (D.lean_mass && D.lean_mass.energy) || {};
   if (!e.dates) return;
   const {dates:wd, series:intakeD}     = lmWindowed(e.dates, e.intake_daily);
@@ -4156,11 +4186,11 @@ function renderLeanMassIntakeTDEE(){
   const ptsIplus = wd.map((d,i) => ({x:d, y: intakePlusD[i]}));
   const ptsT     = wd.map((d,i) => ({x:d, y: tdeeD[i]}));
 
-  destroyChart('ch-lm-intake-tdee');
-  const c = ctx('ch-lm-intake-tdee'); if (!c) return;
+  destroyChart(canvasId);
+  const c = ctx(canvasId); if (!c) return;
   const allY = [...intakeD, ...intakePlusD, ...tdeeD].filter(v => v != null);
   const mult = (e.intake_plus_mult || 1.15).toFixed(2);
-  CHARTS['ch-lm-intake-tdee'] = new Chart(c, {
+  CHARTS[canvasId] = new Chart(c, {
     type:'line',
     data:{datasets:[
       // ── Intake lines — dashed so they read as "input" metrics ───────────
@@ -4177,7 +4207,7 @@ function renderLeanMassIntakeTDEE(){
     ]},
     options: baseTimeOpts('kcal', allY, {})
   });
-  setSource('ch-lm-intake-tdee', `Lose It! · DEXA RMR (${e.rmr_kcal} kcal) · Apple Watch active · Intake+ = Intake × ${e.intake_plus_mult || 1.15} · daily values`);
+  setSource(canvasId, `Lose It! · DEXA RMR (${e.rmr_kcal} kcal) · Apple Watch active · Intake+ = Intake × ${e.intake_plus_mult || 1.15} · daily values`);
 
   // Insight strip — neutral direction (sweet-spot band)
   const ms = e.insight && e.insight.mean_surplus_7d;
@@ -4187,7 +4217,7 @@ function renderLeanMassIntakeTDEE(){
   else if (ms >= -100 && ms < 100){ color = 'orange'; html = `🟠 Near maintenance (${ms>=0?'+':''}${Math.round(ms)} kcal/day) — lean gain will be slow.`; }
   else if (ms < -100){ color = 'red'; html = `🔴 In deficit (${Math.round(ms)} kcal/day) — muscle gain stalled.`; }
   else { color = 'orange'; html = `🟠 Surplus too large (<strong>+${Math.round(ms)} kcal/day</strong>) — fat gain risk.`; }
-  setLMInsight('ch-lm-intake-tdee', {color, html});
+  setLMInsight(canvasId, {color, html});
 }
 
 /* ─── § 01 · Chart #2 — Daily Surplus / Deficit (merged Intake / Intake+ toggle)
@@ -4206,7 +4236,8 @@ function setLMSurplusMode(mode){
   renderLeanMassSurplusDaily();
 }
 
-function renderLeanMassSurplusDaily(){
+function renderLeanMassSurplusDaily(canvasId){
+  canvasId = canvasId || 'ch-lm-surplus-daily';
   const e = (D.lean_mass && D.lean_mass.energy) || {};
   if (!e.dates) return;
 
@@ -4250,8 +4281,8 @@ function renderLeanMassSurplusDaily(){
 
   const xy = (arr) => wd.map((d,i) => ({x:d, y: arr[i]}));
 
-  destroyChart('ch-lm-surplus-daily');
-  const c = ctx('ch-lm-surplus-daily'); if (!c) return;
+  destroyChart(canvasId);
+  const c = ctx(canvasId); if (!c) return;
   const allY  = [...daily, ...r7, ...r14, ...r30, ...r90].filter(v=>v!=null);
   const wAllY = wt7.filter(v=>v!=null);
 
@@ -4260,7 +4291,7 @@ function renderLeanMassSurplusDaily(){
     ? `(Lose It! intake × ${e.intake_plus_mult || 1.15}) − TDEE — Intake+ corrects for uncounted kcal`
     : 'Lose It! intake − (DEXA RMR + Apple active + 10% TEF)';
 
-  CHARTS['ch-lm-surplus-daily'] = new Chart(c, {
+  CHARTS[canvasId] = new Chart(c, {
     type:'bar',
     data:{datasets:[
       { type:'bar', label: barLabel, data: xy(daily), order:10, yAxisID:'y',
@@ -4332,8 +4363,8 @@ function renderLeanMassSurplusDaily(){
       return opts;
     })()
   });
-  setSource('ch-lm-surplus-daily', srcLabel);
-  setImputationNote('ch-lm-surplus-daily', e.imputation);
+  setSource(canvasId, srcLabel);
+  setImputationNote(canvasId, e.imputation);
 
   // Insight on 7d rolling — same color bands for both Intake and Intake+.
   const latest7 = r7.filter(v=>v!=null).slice(-1)[0];
@@ -4344,11 +4375,12 @@ function renderLeanMassSurplusDaily(){
   else if (latest7 >= -100 && latest7 < 100){ color='orange'; html=`🟠 7d rolling surplus <strong>${latest7>=0?'+':''}${Math.round(latest7)} kcal/day${modeTag}</strong> — near maintenance, lean gain slow.`; }
   else if (latest7 < -100){ color='red'; html=`🔴 7d rolling deficit <strong>${Math.round(latest7)} kcal/day${modeTag}</strong> — muscle gain stalled.`; }
   else { color='orange'; html=`🟠 7d rolling surplus <strong>+${Math.round(latest7)} kcal/day${modeTag}</strong> — too large, fat gain risk.`; }
-  setLMInsight('ch-lm-surplus-daily', {color, html});
+  setLMInsight(canvasId, {color, html});
 }
 
 /* ─── § 01 · Chart #4 — Daily protein with multi-window rolling + target line ─── */
-function renderLeanMassProtein(){
+function renderLeanMassProtein(canvasId){
+  canvasId = canvasId || 'ch-lm-protein';
   const e = (D.lean_mass && D.lean_mass.energy) || {};
   if (!e.dates) return;
   const {dates:wd, series:daily}  = lmWindowed(e.dates, e.protein_daily);
@@ -4369,11 +4401,11 @@ function renderLeanMassProtein(){
   const r90 = roll(daily, 90);
   const xy = (arr) => wd.map((d,i) => ({x:d, y: arr[i]}));
 
-  destroyChart('ch-lm-protein');
-  const c = ctx('ch-lm-protein'); if (!c) return;
+  destroyChart(canvasId);
+  const c = ctx(canvasId); if (!c) return;
   const allY = [...daily, ...target, ...r7, ...r30].filter(v=>v!=null);
 
-  CHARTS['ch-lm-protein'] = new Chart(c, {
+  CHARTS[canvasId] = new Chart(c, {
     type:'bar',
     data:{datasets:[
       { type:'bar', label:'Daily protein (g)', data: xy(daily), order:10,
@@ -4400,8 +4432,8 @@ function renderLeanMassProtein(){
     ]},
     options: baseTimeOpts('protein (g)', allY, {})
   });
-  setSource('ch-lm-protein', 'Lose It! · target moves with 7d-avg bodyweight (Apple Health scale)');
-  setImputationNote('ch-lm-protein', e.imputation);
+  setSource(canvasId, 'Lose It! · target moves with 7d-avg bodyweight (Apple Health scale)');
+  setImputationNote(canvasId, e.imputation);
 
   // Insight strip — direction = up
   const ins = e.insight || {};
@@ -4418,7 +4450,7 @@ function renderLeanMassProtein(){
     color='red';
     html=`🔴 Below target — <strong>${ins.protein_7d_avg.toFixed(0)}g</strong> 7d avg (target ${ins.target_7d_avg.toFixed(0)}g) · only <strong>${ins.protein_hits_14d}/${ins.protein_days_14d}</strong> days hit`;
   }
-  setLMInsight('ch-lm-protein', {color, html});
+  setLMInsight(canvasId, {color, html});
 }
 
 /* ─── Hero: headline + lagging-drivers summary + top-fix recommendation ───
@@ -5013,6 +5045,31 @@ function renderLeanMassV2(){
   try { renderLeanMassV2Priority(); }     catch(e){ console.error('[LM2] priority', e); }
   try { renderLeanMassV2Levers(); }       catch(e){ console.error('[LM2] levers', e); }
   try { lm2SyncAdvancedActive(); }        catch(e){ console.error('[LM2] sync_active', e); }
+
+  /* ── BLOCK 3 · DEEP DIVE ── real charts per lever ─────────────────────
+   * Each render function is parameterized to accept a v.2 canvas/host ID,
+   * so the same logic powers both tabs. State (LM_SURPLUS_TOGGLE,
+   * LM_HARDSET_THR, LM_HM_MODE, LM_HM_THR, LM_HM_INDIRECT) is shared with
+   * v.1 — change it there and both views update. v.2 heatmap passes
+   * syncControls=false so its render doesn't touch v.1's UI affordances. */
+  /* Nutrition ─ 3 charts */
+  try { renderLeanMassIntakeTDEE('ch-lm2-intake-tdee'); }    catch(e){ console.error('[LM2] intake-tdee', e); }
+  try { renderLeanMassSurplusDaily('ch-lm2-surplus-daily'); } catch(e){ console.error('[LM2] surplus-daily', e); }
+  try { renderLeanMassProtein('ch-lm2-protein'); }            catch(e){ console.error('[LM2] protein', e); }
+  /* Training ─ 3 charts (heatmap: syncControls=false → don't touch v.1 UI) */
+  try { renderTrainingTotalSets('ch-lm2-total-sets'); }       catch(e){ console.error('[LM2] total-sets', e); }
+  try { renderTrainingHardSets('ch-lm2-hard-sets', false); }  catch(e){ console.error('[LM2] hard-sets', e); }
+  try {
+    const lbl = document.getElementById('lm2-hardset-thresh-label');
+    if (lbl) lbl.textContent = String(LM_HARDSET_THR);
+  } catch(_){}
+  try { renderTrainingHeatmap('lm2-heatmap', false); }        catch(e){ console.error('[LM2] heatmap', e); }
+  /* Recovery ─ 4 charts */
+  try { renderRecoveryHRV('ch-lm2-hrv'); }                    catch(e){ console.error('[LM2] hrv', e); }
+  try { renderRecoverySleepScores('ch-lm2-sleep-scores'); }   catch(e){ console.error('[LM2] sleep-scores', e); }
+  try { renderRecoverySleepDuration('ch-lm2-sleep-duration'); } catch(e){ console.error('[LM2] sleep-duration', e); }
+  try { renderRecoveryRecovery('ch-lm2-recovery', 'lm2-recovery-zones', 'lm2-recovery-zones-caption'); }
+       catch(e){ console.error('[LM2] recovery', e); }
 }
 
 /* Wire v.2 advanced toggles. Each one updates the SHARED LM_* global
@@ -5148,16 +5205,17 @@ function _trailingInsight(canvasId, roll4, roll12, noun){
 }
 
 /* §02.1 — Total sets per week (line + 4/8/12w trailing averages) */
-function renderTrainingTotalSets(){
+function renderTrainingTotalSets(canvasId){
+  canvasId = canvasId || 'ch-lm-total-sets';
   const t = (D.lean_mass && D.lean_mass.training) || {};
   const sw = t.sets_weekly; if (!sw) return;
-  const {roll4, roll12} = _renderWeeklyLineChart('ch-lm-total-sets', {
+  const {roll4, roll12} = _renderWeeklyLineChart(canvasId, {
     weeks: sw.weeks,
     series: sw.total_sets,
     yLabel: 'working sets',
     sourceText: 'Hevy · working sets only (warmup/drop/failure excluded)',
   });
-  _trailingInsight('ch-lm-total-sets', roll4, roll12, 'Volume');
+  _trailingInsight(canvasId, roll4, roll12, 'Volume');
 }
 
 /* §02.2 — Hard sets per week (reps < X, default 15) */
@@ -5183,21 +5241,23 @@ function _syncHardsetUI(){
   if (lbl) lbl.textContent = String(LM_HARDSET_THR);
 }
 
-function renderTrainingHardSets(){
+function renderTrainingHardSets(canvasId, syncUI){
+  canvasId = canvasId || 'ch-lm-hard-sets';
+  if (syncUI === undefined) syncUI = true;
   const t = (D.lean_mass && D.lean_mass.training) || {};
   const sw = t.sets_weekly; if (!sw) return;
   const thrs = _hardsetThrList();
   if (thrs.indexOf(LM_HARDSET_THR) < 0) LM_HARDSET_THR = sw.default_max_threshold || 15;
 
   const series = (sw.hard_sets_by_max_reps && sw.hard_sets_by_max_reps[String(LM_HARDSET_THR)]) || [];
-  const {roll4, roll12} = _renderWeeklyLineChart('ch-lm-hard-sets', {
+  const {roll4, roll12} = _renderWeeklyLineChart(canvasId, {
     weeks: sw.weeks,
     series: series,
     yLabel: `hard sets (reps < ${LM_HARDSET_THR})`,
     sourceText: `Hevy · working sets where reps < ${LM_HARDSET_THR}`,
   });
-  _syncHardsetUI();
-  _trailingInsight('ch-lm-hard-sets', roll4, roll12, 'Hard-set volume');
+  if (syncUI) _syncHardsetUI();
+  _trailingInsight(canvasId, roll4, roll12, 'Hard-set volume');
 }
 
 function _onHardsetChange(){
@@ -5328,10 +5388,12 @@ function lmBuildDirectHeatmap(){
 let LM_PO_THR = 10;         // default — matches PROG_OVERLOAD_DEFAULT_MIN
 try { const __v = +localStorage.getItem('lm_po_thr'); if (__v && [5,8,10,12,15,20].includes(__v)) LM_PO_THR = __v; } catch(_){}
 
-function renderTrainingHeatmap(){
+function renderTrainingHeatmap(hostId, syncControls){
+  hostId = hostId || 'lm-heatmap';
+  if (syncControls === undefined) syncControls = true;
   const t = (D.lean_mass && D.lean_mass.training) || {};
   const hm = t.heatmap; if (!hm) return;
-  const host = document.getElementById('lm-heatmap'); if (!host) return;
+  const host = document.getElementById(hostId); if (!host) return;
 
   const weeks = hm.weeks || [];
   const muscles = hm.muscles || [];
@@ -5462,35 +5524,37 @@ function renderTrainingHeatmap(){
   const src = (mode === 'hard')
     ? `Hevy · working sets where reps < ${LM_HM_THR} · ${countingNote}`
     : `Hevy · all working sets · ${countingNote}`;
-  setSource('lm-heatmap', src);
+  setSource(hostId, src);
 
-  // Flag legend text
-  const flagLegend = document.getElementById('lm-hm-flag-legend');
-  if (flagLegend){
-    flagLegend.textContent = `⚠ red outline = <${floor} ${metricNoun}/wk for ${minRun}+ consecutive weeks`;
-  }
+  // Flag legend text — only update v.1 legend (v.2 doesn't have one)
+  if (syncControls){
+    const flagLegend = document.getElementById('lm-hm-flag-legend');
+    if (flagLegend){
+      flagLegend.textContent = `⚠ red outline = <${floor} ${metricNoun}/wk for ${minRun}+ consecutive weeks`;
+    }
 
-  // Mode/slider UI sync
-  document.querySelectorAll('.lm-hm-mode .mode-btn[data-hm-mode]').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-hm-mode') === mode);
-  });
-  // Indirect-count toggle UI sync
-  document.querySelectorAll('.lm-hm-indirect .mode-btn[data-hm-indirect]').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-hm-indirect') === LM_HM_INDIRECT);
-  });
-  const sliderWrap = document.getElementById('lm-hm-slider-wrap');
-  const sliderEl   = document.getElementById('lm-hm-slider');
-  const thrLabel   = document.getElementById('lm-hm-thresh-label');
-  if (sliderWrap) sliderWrap.classList.toggle('disabled', mode !== 'hard');
-  if (sliderEl){
-    sliderEl.max = String(thresholds.length - 1);
-    const idx = thresholds.indexOf(LM_HM_THR);
-    sliderEl.value = String(idx < 0 ? 3 : idx);
+    // Mode/slider UI sync (v.1 controls only)
+    document.querySelectorAll('.lm-hm-mode .mode-btn[data-hm-mode]').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-hm-mode') === mode);
+    });
+    // Indirect-count toggle UI sync
+    document.querySelectorAll('.lm-hm-indirect .mode-btn[data-hm-indirect]').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-hm-indirect') === LM_HM_INDIRECT);
+    });
+    const sliderWrap = document.getElementById('lm-hm-slider-wrap');
+    const sliderEl   = document.getElementById('lm-hm-slider');
+    const thrLabel   = document.getElementById('lm-hm-thresh-label');
+    if (sliderWrap) sliderWrap.classList.toggle('disabled', mode !== 'hard');
+    if (sliderEl){
+      sliderEl.max = String(thresholds.length - 1);
+      const idx = thresholds.indexOf(LM_HM_THR);
+      sliderEl.value = String(idx < 0 ? 3 : idx);
+    }
+    if (thrLabel) thrLabel.textContent = String(LM_HM_THR);
+    document.querySelectorAll('#lm-heatmap-legend + * .lm-hm-ticks span, .lm-hm-ticks span').forEach(s => {
+      s.classList.toggle('active', +s.getAttribute('data-thr') === LM_HM_THR);
+    });
   }
-  if (thrLabel) thrLabel.textContent = String(LM_HM_THR);
-  document.querySelectorAll('#lm-heatmap-legend + * .lm-hm-ticks span, .lm-hm-ticks span').forEach(s => {
-    s.classList.toggle('active', +s.getAttribute('data-thr') === LM_HM_THR);
-  });
 
   // Insight strip
   let color, html;
@@ -5502,7 +5566,7 @@ function renderTrainingHeatmap(){
     color = underDetails.length >= 3 ? 'red' : 'orange';
     html = `${underDetails.length>=3?'🔴':'🟠'} Undertrained streak: <strong>${names.join(', ')}</strong> — each spent ${minRun}+ consecutive weeks below ${floor} ${metricNoun}/wk.`;
   }
-  setLMInsight('lm-heatmap', {color, html});
+  setLMInsight(hostId, {color, html});
 }
 
 function _onHeatmapModeChange(e){
@@ -5835,7 +5899,8 @@ function _slug(s){
    ──────────────────────────────────────────────────────────────────────── */
 
 /* §03.1 — HRV trend */
-function renderRecoveryHRV(){
+function renderRecoveryHRV(canvasId){
+  canvasId = canvasId || 'ch-lm-hrv';
   const r = (D.lean_mass && D.lean_mass.recovery) || {};
   const h = r.hrv; if (!h || !h.dates) return;
   const {dates:wd, series:daily} = lmWindowed(h.dates, h.daily);
@@ -5844,11 +5909,11 @@ function renderRecoveryHRV(){
   const {series:roll60}          = lmWindowed(h.dates, h.roll_60);
   const xy = arr => wd.map((d,i)=>({x:d, y:arr[i]}));
 
-  destroyChart('ch-lm-hrv');
-  const c = ctx('ch-lm-hrv'); if (!c) return;
+  destroyChart(canvasId);
+  const c = ctx(canvasId); if (!c) return;
   const allY = [...daily, ...roll7, ...roll14, ...roll60].filter(v=>v!=null);
 
-  CHARTS['ch-lm-hrv'] = new Chart(c, {
+  CHARTS[canvasId] = new Chart(c, {
     type:'line',
     data:{datasets:[
       { label:'Daily HRV', data: xy(daily), borderColor: COLORS.cyan+'90',
@@ -5863,7 +5928,7 @@ function renderRecoveryHRV(){
     ]},
     options: baseTimeOpts('HRV (ms)', allY, {})
   });
-  setSource('ch-lm-hrv', 'WHOOP primary (nightly slow-wave) · Apple Health fallback for uncovered nights');
+  setSource(canvasId, 'WHOOP primary (nightly slow-wave) · Apple Health fallback for uncovered nights');
 
   const ins = h.insight || {};
   let color, html;
@@ -5880,11 +5945,12 @@ function renderRecoveryHRV(){
     const sign = (ins.delta_pct_14d_vs_60d||0) >= 0 ? '+' : '';
     html=`🟢 HRV stable — 14d avg <strong>${ins.mean_14d}ms</strong> (${sign}${ins.delta_pct_14d_vs_60d}% vs 60d ${ins.mean_60d}ms).`;
   }
-  setLMInsight('ch-lm-hrv', {color, html});
+  setLMInsight(canvasId, {color, html});
 }
 
 /* §03.2 — Sleep score overlay (WHOOP + Oura) */
-function renderRecoverySleepScores(){
+function renderRecoverySleepScores(canvasId){
+  canvasId = canvasId || 'ch-lm-sleep-scores';
   const r = (D.lean_mass && D.lean_mass.recovery) || {};
   const s = r.sleep_scores; if (!s || !s.dates) return;
   const {dates:wd, series:whoopD}  = lmWindowed(s.dates, s.whoop_daily);
@@ -5897,8 +5963,8 @@ function renderRecoverySleepScores(){
   const {series:ouraR90}           = lmWindowed(s.dates, s.oura_roll_90 || []);
   const xy = arr => wd.map((d,i)=>({x:d, y:arr[i]}));
 
-  destroyChart('ch-lm-sleep-scores');
-  const c = ctx('ch-lm-sleep-scores'); if (!c) return;
+  destroyChart(canvasId);
+  const c = ctx(canvasId); if (!c) return;
   const allY = [...whoopD, ...ouraD, ...whoopR7, ...ouraR7,
                 ...whoopR30, ...ouraR30, ...whoopR90, ...ouraR90].filter(v=>v!=null);
 
@@ -5928,7 +5994,7 @@ function renderRecoverySleepScores(){
     );
   }
 
-  CHARTS['ch-lm-sleep-scores'] = new Chart(c, {
+  CHARTS[canvasId] = new Chart(c, {
     type:'line', data:{datasets},
     options: baseTimeOpts('sleep score (0–100)', allY, {})
   });
@@ -5937,7 +6003,7 @@ function renderRecoverySleepScores(){
     : s.oura_source === 'readiness_fallback'
       ? 'Oura sleep_balance_score (readiness fallback — dedicated sleep table not yet pulled)'
       : 'Oura sleep data not available';
-  setSource('ch-lm-sleep-scores', `WHOOP performance_pct + ${srcBase}`);
+  setSource(canvasId, `WHOOP performance_pct + ${srcBase}`);
 
   const ins = s.insight || {};
   const whoop14 = ins.whoop_mean_14d, oura14 = ins.oura_mean_14d;
@@ -5953,11 +6019,12 @@ function renderRecoverySleepScores(){
     else if (avg >= 65){ color='orange'; html=`🟠 Moderate sleep (${parts.join(' · ')} 14d avg).`; }
     else { color='red'; html=`🔴 Poor sleep (${parts.join(' · ')} 14d avg) — recovery and gains will suffer.`; }
   }
-  setLMInsight('ch-lm-sleep-scores', {color, html});
+  setLMInsight(canvasId, {color, html});
 }
 
 /* §03.3 — Sleep duration vs 7.5h reference */
-function renderRecoverySleepDuration(){
+function renderRecoverySleepDuration(canvasId){
+  canvasId = canvasId || 'ch-lm-sleep-duration';
   const r = (D.lean_mass && D.lean_mass.recovery) || {};
   const s = r.sleep_duration; if (!s || !s.dates) return;
   const {dates:wd, series:daily} = lmWindowed(s.dates, s.daily);
@@ -5967,11 +6034,11 @@ function renderRecoverySleepDuration(){
   const ref = s.reference_hours || 7.5;
   const xy = arr => wd.map((d,i)=>({x:d, y:arr[i]}));
 
-  destroyChart('ch-lm-sleep-duration');
-  const c = ctx('ch-lm-sleep-duration'); if (!c) return;
+  destroyChart(canvasId);
+  const c = ctx(canvasId); if (!c) return;
   const allY = [...daily, ...roll7, ...roll30, ...roll90, ref].filter(v=>v!=null);
 
-  CHARTS['ch-lm-sleep-duration'] = new Chart(c, {
+  CHARTS[canvasId] = new Chart(c, {
     type:'bar',
     data:{datasets:[
       { type:'bar', label:'Daily sleep (h)', data: xy(daily), order:10,
@@ -5996,7 +6063,7 @@ function renderRecoverySleepDuration(){
     ]},
     options: baseTimeOpts('hours', allY, {})
   });
-  setSource('ch-lm-sleep-duration', 'WHOOP asleep_h primary · Apple Health total_h fallback for uncovered nights');
+  setSource(canvasId, 'WHOOP asleep_h primary · Apple Health total_h fallback for uncovered nights');
 
   const ins = s.insight || {};
   let color, html;
@@ -6012,11 +6079,14 @@ function renderRecoverySleepDuration(){
     color='red';
     html=`🔴 Sleep-deprived — only <strong>${ins.mean_7d.toFixed(1)}h</strong> 7d avg. ${ins.short_days_14d}/${ins.total_days_14d} nights in last 14d were under 7h. Recovery compromised.`;
   }
-  setLMInsight('ch-lm-sleep-duration', {color, html});
+  setLMInsight(canvasId, {color, html});
 }
 
 /* §03.4 — WHOOP recovery % with zone bands */
-function renderRecoveryRecovery(){
+function renderRecoveryRecovery(canvasId, zonesId, captionId){
+  canvasId = canvasId || 'ch-lm-recovery';
+  zonesId = zonesId || 'lm-recovery-zones';
+  captionId = captionId || 'lm-recovery-zones-caption';
   const r = (D.lean_mass && D.lean_mass.recovery) || {};
   const rec = r.recovery; if (!rec || !rec.dates) return;
   const {dates:wd, series:daily} = lmWindowed(rec.dates, rec.daily);
@@ -6026,10 +6096,10 @@ function renderRecoveryRecovery(){
   const bands = rec.bands || {red_max:33, yellow_max:66};
   const xy = arr => wd.map((d,i)=>({x:d, y:arr[i]}));
 
-  destroyChart('ch-lm-recovery');
-  const c = ctx('ch-lm-recovery'); if (!c) return;
+  destroyChart(canvasId);
+  const c = ctx(canvasId); if (!c) return;
 
-  CHARTS['ch-lm-recovery'] = new Chart(c, {
+  CHARTS[canvasId] = new Chart(c, {
     type:'bar',
     data:{datasets:[
       { type:'bar', label:'Daily recovery %', data: xy(daily), order:10,
@@ -6055,13 +6125,13 @@ function renderRecoveryRecovery(){
       return opts;
     })()
   });
-  setSource('ch-lm-recovery', 'WHOOP daily recovery score (HRV + RHR + sleep)');
+  setSource(canvasId, 'WHOOP daily recovery score (HRV + RHR + sleep)');
 
   // Zone distribution strip
   const zd = rec.zone_distribution_14d || {red:0, yellow:0, green:0, total:0};
   const total = zd.total || 1;
-  const zonesEl = document.getElementById('lm-recovery-zones');
-  const captionEl = document.getElementById('lm-recovery-zones-caption');
+  const zonesEl = document.getElementById(zonesId);
+  const captionEl = document.getElementById(captionId);
   if (zonesEl){
     if (zd.total === 0){
       zonesEl.innerHTML = `<div class="z dim">No recovery data in last 14d</div>`;
@@ -6095,7 +6165,7 @@ function renderRecoveryRecovery(){
     color='red';
     html=`🔴 Poor recovery — <strong>${ins.mean_7d.toFixed(0)}%</strong> 7d avg (in red zone). Rest or deload indicated.`;
   }
-  setLMInsight('ch-lm-recovery', {color, html});
+  setLMInsight(canvasId, {color, html});
 }
 
 /* §03.5 — Resting heart rate */
