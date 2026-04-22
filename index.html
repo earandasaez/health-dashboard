@@ -198,10 +198,16 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
 .lm-section-header .sub{font-size:12px;color:var(--dim);font-style:italic;}
 
 /* Sticky section toolbar (unit toggle) */
-.lm-sticky-bar{position:sticky;top:44px;z-index:9;background:var(--bg);padding:10px 0 8px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+.lm-sticky-bar{position:sticky;top:44px;z-index:9;background:var(--bg);padding:10px 0 8px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-wrap:wrap;}
 .lm-sticky-bar .lbl{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;}
 .lm-sticky-bar button{background:var(--card);border:1px solid var(--border);color:var(--accent);padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;}
 .lm-sticky-bar button:hover{border-color:var(--accent);}
+/* Intake+ uplift selector (2026-04-22): 5 small pills sharing a pill-group. */
+.lm-sticky-bar .lm-uplift-group{display:inline-flex;gap:2px;background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:3px;border-radius:999px;}
+.lm-sticky-bar .lm-uplift-group button{background:transparent;color:var(--dim);border:none;padding:4px 10px;font-size:11px;font-weight:700;border-radius:999px;cursor:pointer;letter-spacing:.3px;}
+.lm-sticky-bar .lm-uplift-group button:hover{color:var(--text);border-color:transparent;}
+.lm-sticky-bar .lm-uplift-group button.active{background:var(--accent);color:#0b0d12;}
+.lm-sticky-bar .divider{height:18px;width:1px;background:var(--border);margin:0 4px;}
 
 /* 4-box North Star KPI row */
 .lm-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:22px;}
@@ -866,10 +872,19 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
 <!-- ═══════════════════════════════════════════════ TAB: LEAN MASS TRACKER (first) -->
 <section class="section active" id="tab-leanmass">
 
-  <!-- Sticky section toolbar: mass-unit toggle (LM_UNIT) -->
+  <!-- Sticky section toolbar: mass-unit toggle (LM_UNIT) + Intake+ uplift selector -->
   <div class="lm-sticky-bar">
     <span class="lbl">Mass unit</span>
     <button id="lm-unit-toggle" onclick="toggleLeanMassUnit()">Showing: KG &nbsp;⇄&nbsp; lbs</button>
+    <span class="divider"></span>
+    <span class="lbl" title="Controls the Intake+ multiplier used across the tab.&#10;Intake+ = logged Intake × (1 + uplift).&#10;Accounts for systematically uncounted calories (olive oil, cooking fats, small snacks).">Intake+ uplift</span>
+    <div class="lm-uplift-group" id="lm-uplift-toggle">
+      <button data-lm-uplift="0">0%</button>
+      <button data-lm-uplift="5">5%</button>
+      <button data-lm-uplift="10">10%</button>
+      <button class="active" data-lm-uplift="15">15%</button>
+      <button data-lm-uplift="20">20%</button>
+    </div>
     <span style="font-size:11px;color:var(--dim);margin-left:auto;">Tracking: lean-mass progression &amp; its drivers</span>
   </div>
 
@@ -1268,6 +1283,15 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
   <div class="lm-sticky-bar">
     <span class="lbl">Mass unit</span>
     <button id="lm2-unit-toggle" onclick="toggleLeanMassUnit()">Showing: KG &nbsp;⇄&nbsp; lbs</button>
+    <span class="divider"></span>
+    <span class="lbl" title="Controls the Intake+ multiplier used across the tab.&#10;Intake+ = logged Intake × (1 + uplift).&#10;Accounts for systematically uncounted calories (olive oil, cooking fats, small snacks).">Intake+ uplift</span>
+    <div class="lm-uplift-group" id="lm2-uplift-toggle">
+      <button data-lm2-uplift="0">0%</button>
+      <button data-lm2-uplift="5">5%</button>
+      <button data-lm2-uplift="10">10%</button>
+      <button class="active" data-lm2-uplift="15">15%</button>
+      <button data-lm2-uplift="20">20%</button>
+    </div>
     <span style="font-size:11px;color:var(--dim);margin-left:auto;">Simplified lean-mass view · 3 blocks</span>
   </div>
 
@@ -2608,6 +2632,88 @@ function kgToLM(kg){
   return LM_UNIT === 'kg' ? kg : kg * LM_LBS_PER_KG;
 }
 
+/* ─── Intake+ uplift selector (2026-04-22) ──────────────────────────────────
+ * The backend ships intake_plus_* computed at a fixed ×1.15 multiplier.
+ * This helper recomputes *in-place* on D.lean_mass.energy from the base
+ * intake_daily + tdee_daily arrays, using the live LM_INTAKE_PLUS_MULT.
+ *
+ * Touched fields:
+ *   e.intake_plus_mult
+ *   e.intake_plus_daily        (intake × mult)
+ *   e.intake_plus_7d           (7d rolling mean)
+ *   e.surplus_plus_daily       (intake_plus − tdee)
+ *   e.surplus_consistency_plus (14d + 30d hit/tot/pct)
+ *   e.insight.mean_surplus_plus_7d
+ *
+ * Every downstream consumer (surplus card, intake-vs-TDEE chart, daily-surplus
+ * chart, insights, hero) already reads these fields, so a single recompute +
+ * re-render refreshes the whole tab.                                      */
+let LM_INTAKE_PLUS_MULT = 1.15;  /* default matches backend precompute */
+
+function _rollingAvgN(arr, n){
+  const out = new Array(arr.length).fill(null);
+  for (let i = 0; i < arr.length; i++){
+    if (i + 1 < n) continue;
+    let sum = 0, cnt = 0;
+    for (let k = i - n + 1; k <= i; k++){
+      const v = arr[k];
+      if (v == null) continue;
+      sum += v; cnt++;
+    }
+    out[i] = cnt === n ? sum / cnt : null;
+  }
+  return out;
+}
+
+function applyIntakePlusUplift(){
+  const e = ((D.lean_mass||{}).energy);
+  if (!e || !Array.isArray(e.intake_daily) || !Array.isArray(e.tdee_daily)) return;
+  const mult = LM_INTAKE_PLUS_MULT;
+  const n    = e.intake_daily.length;
+  const ip   = new Array(n);
+  const sp   = new Array(n);
+  for (let i = 0; i < n; i++){
+    const ii = e.intake_daily[i];
+    const td = e.tdee_daily[i];
+    if (ii == null || td == null){
+      ip[i] = null; sp[i] = null;
+    } else {
+      ip[i] = Math.round(ii * mult);
+      sp[i] = Math.round(ip[i] - td);
+    }
+  }
+  e.intake_plus_mult   = mult;
+  e.intake_plus_daily  = ip;
+  e.surplus_plus_daily = sp;
+  /* Rolling 7d of intake_plus. */
+  e.intake_plus_7d = _rollingAvgN(ip, 7);
+  /* Consistency % for 14d / 30d — mirrors backend pct_days_meeting logic:
+   *   hit = days where surplus_plus > 0, tot = days with non-null surplus_plus. */
+  const mkCons = (tail) => {
+    let hit = 0, tot = 0;
+    for (const v of tail){ if (v == null) continue; tot++; if (v > 0) hit++; }
+    return { hit, tot, pct: tot ? Math.round(1000 * hit / tot) / 10 : 0 };
+  };
+  const c14 = mkCons(sp.slice(-14));
+  const c30 = mkCons(sp.slice(-30));
+  e.surplus_consistency_plus = {
+    days_in_surplus_14d: c14.hit, total_days_14d: c14.tot, pct_14d: c14.pct,
+    days_in_surplus_30d: c30.hit, total_days_30d: c30.tot, pct_30d: c30.pct,
+  };
+  /* Mean of the last 7 valid values of the 7d-rolling-surplus series —
+   * matches backend's mean_tail(rolling_avg(surplus_plus_daily, 7), 7). */
+  const rs  = _rollingAvgN(sp, 7);
+  const tail = rs.slice(-7).filter(v => v != null);
+  const mean7d = tail.length ? Math.round(tail.reduce((a,b)=>a+b,0) / tail.length) : null;
+  e.insight = e.insight || {};
+  e.insight.mean_surplus_plus_7d = mean7d;
+}
+
+/* Call once at load so if the user refreshes into a cached tab the arrays
+ * are in sync with the default multiplier. Side-effect-only; noop if the
+ * payload fields aren't present yet. */
+try { applyIntakePlusUplift(); } catch(_){}
+
 /* Aggregate apple_daily rows into Monday-start ISO weeks.
  * Returns [{monday:'YYYY-MM-DD', w_avg, l_avg, f_avg, n, partial}, …] ascending.
  * w_avg/l_avg/f_avg are kg; null if no data in that week.
@@ -3678,7 +3784,9 @@ function updateLMSurplus(){
   el.className = 'val ' + cls;
   const fill = document.getElementById('lm-surplus-fill');
   if (fill){ fill.style.width = Math.min(100,pct) + '%'; fill.style.background = lmColorVar(cls); }
-  const srcLbl = LM_SURPLUS_SRC === 'plus' ? 'Intake+ (×1.15)' : 'Intake (strict)';
+  const srcLbl = LM_SURPLUS_SRC === 'plus'
+    ? `Intake+ (×${(e.intake_plus_mult || LM_INTAKE_PLUS_MULT).toFixed(2)})`
+    : 'Intake (strict)';
   const detail = document.getElementById('lm-surplus-detail');
   if (detail) detail.textContent = `${hit} of ${tot} days · target 50% · ${srcLbl}`;
 }
@@ -3878,6 +3986,21 @@ function wireLMDriverToggles(){
     });
     try { renderLeanMassAbsoluteChart(); } catch(e){ console.error('[LM] abs refresh', e); }
     try { renderLeanMassAbsoluteChart('ch-lm2-abs-weekly', 'lm2-abs-title', 'lm2-abs-sub'); } catch(_){}
+  }));
+  /* Intake+ uplift selector — shared state LM_INTAKE_PLUS_MULT with v.2.
+   * Recomputes intake_plus_* arrays in-place then redraws both tabs. */
+  document.querySelectorAll('[data-lm-uplift]').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('[data-lm-uplift]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const pct = parseInt(b.dataset.lmUplift, 10);
+    LM_INTAKE_PLUS_MULT = 1 + pct / 100;
+    /* Mirror v.2 selector. */
+    document.querySelectorAll('[data-lm2-uplift]').forEach(x => {
+      x.classList.toggle('active', parseInt(x.dataset.lm2Uplift,10) === pct);
+    });
+    try { applyIntakePlusUplift(); } catch(e){ console.error('[LM] uplift recompute', e); }
+    try { renderLeanMass(); }    catch(e){ console.error('[LM] uplift re-render v1', e); }
+    try { renderLeanMassV2(); }  catch(e){ console.error('[LM] uplift re-render v2', e); }
   }));
 }
 
@@ -5181,6 +5304,14 @@ function lm2SyncAdvancedActive(){
   mark('[data-lm2-rec-win]',     LM_REC_WIN);
   mark('[data-lm2-combined-period]', LM_COMBINED_PERIOD);
   mark('[data-lm2-abs-period]',      LM_ABS_PERIOD);
+  /* Uplift selector — data attr stores integer percent (0,5,10,15,20). */
+  const upliftPct = Math.round((LM_INTAKE_PLUS_MULT - 1) * 100);
+  document.querySelectorAll('[data-lm2-uplift]').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.lm2Uplift,10) === upliftPct);
+  });
+  document.querySelectorAll('[data-lm-uplift]').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.lmUplift,10) === upliftPct);
+  });
 }
 
 /* Top-level v.2 orchestrator. Called from renderAll() and after toggle changes. */
@@ -5254,6 +5385,17 @@ function renderLeanMassV2(){
     document.querySelectorAll('[data-lm-abs-period]').forEach(x => {
       x.classList.toggle('active', x.dataset.lmAbsPeriod === LM_ABS_PERIOD);
     });
+  });
+  /* Intake+ uplift selector — shared state with v.1 (LM_INTAKE_PLUS_MULT).
+   * applyIntakePlusUplift() rewrites intake_plus_* in place; re-render both. */
+  bindGroup('[data-lm2-uplift]', b => {
+    const pct = parseInt(b.dataset.lm2Uplift, 10);
+    LM_INTAKE_PLUS_MULT = 1 + pct / 100;
+    /* Mirror v.1 selector. */
+    document.querySelectorAll('[data-lm-uplift]').forEach(x => {
+      x.classList.toggle('active', parseInt(x.dataset.lmUplift,10) === pct);
+    });
+    try { applyIntakePlusUplift(); } catch(e){ console.error('[LM2] uplift recompute', e); }
   });
 })();
 
