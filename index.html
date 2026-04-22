@@ -491,28 +491,44 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
 .lm-hm-slider input[type=range]{width:100%;accent-color:var(--accent);}
 .lm-hm-ticks{margin:0;padding:0 2px;}
 .lm-hm-slider.disabled{opacity:0.4;pointer-events:none;}
-.lm-heatmap{display:grid;gap:2px;margin-top:6px;font-size:10.5px;}
+/* Heatmap grid — weeks count is dynamic via --hm-weeks custom property, driven
+ * by the global header date window. When many weeks are selected (>20), we
+ * switch to a horizontal-scrolling container with a fixed min-cell-width so
+ * individual cells stay readable. The sticky row-label column keeps muscle
+ * names visible while scrolling. */
+.lm-heatmap-scroll{overflow-x:auto;margin-top:6px;}
+.lm-heatmap{display:grid;gap:2px;font-size:10.5px;--hm-weeks:12;--hm-cell-min:28px;}
+.lm-heatmap.wide{min-width:calc(108px + var(--hm-weeks) * var(--hm-cell-min));}
 .lm-heatmap .row{display:grid;grid-template-columns:108px 1fr;gap:2px;align-items:center;}
-.lm-heatmap .row-label{color:var(--dim);font-weight:600;font-size:11px;padding-right:8px;text-align:right;white-space:nowrap;}
+.lm-heatmap .row-label{color:var(--dim);font-weight:600;font-size:11px;padding-right:8px;text-align:right;white-space:nowrap;position:sticky;left:0;background:var(--card);z-index:2;}
 .lm-heatmap .row-label.flagged{color:var(--red);font-weight:700;}
 .lm-heatmap .row-label.flagged::before{content:"⚠ ";color:var(--red);}
-.lm-heatmap .cells{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;}
+.lm-heatmap .cells{display:grid;grid-template-columns:repeat(var(--hm-weeks),minmax(var(--hm-cell-min),1fr));gap:2px;}
 .lm-heatmap .cell{height:26px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#0a0f1c;font-weight:600;font-size:10.5px;cursor:default;position:relative;}
 .lm-heatmap .cell.empty{background:var(--card2);color:var(--dim);font-weight:400;}
-.lm-heatmap .cell.lo{background:#7a3a3a;color:#ffd6d6;}
+/* Absolute volume bands (per user 2026-04-22):
+ *   LOW      — v < 20          → RED
+ *   ADEQUATE — 20 ≤ v ≤ 25      → GREEN
+ *   HIGH     — v > 25           → BLACK
+ * Bands apply uniformly across muscles (replaces the old per-muscle quantile
+ * coloring so inter-muscle comparison is meaningful at a glance). */
+.lm-heatmap .cell.lo{background:var(--red);color:#1a0505;}
 .lm-heatmap .cell.mid{background:var(--green);color:#0a140a;}
-.lm-heatmap .cell.hi{background:var(--orange);color:#1a0d00;}
+.lm-heatmap .cell.hi{background:#0a0f1c;color:#e8ecf4;box-shadow:inset 0 0 0 1px #2b3446;}
 .lm-heatmap .cell.under{box-shadow:inset 0 0 0 1.5px var(--red);}
 .lm-heatmap .week-row{grid-template-columns:108px 1fr;margin-bottom:4px;}
-.lm-heatmap .week-row .cells{grid-template-columns:repeat(12,1fr);}
+.lm-heatmap .week-row .cells{grid-template-columns:repeat(var(--hm-weeks),minmax(var(--hm-cell-min),1fr));}
 .lm-heatmap .week-row .tick{font-size:9.5px;color:var(--dim);text-align:center;writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;}
+.lm-heatmap .week-row .row-label{background:var(--card);}
 .lm-heatmap-legend{display:flex;gap:16px;align-items:center;margin-top:12px;font-size:11px;color:var(--dim);flex-wrap:wrap;}
 .lm-heatmap-legend .sw{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:4px;vertical-align:middle;}
 .lm-heatmap-legend .sw.empty{background:var(--card2);}
-.lm-heatmap-legend .sw.lo{background:#7a3a3a;}
+.lm-heatmap-legend .sw.lo{background:var(--red);}
 .lm-heatmap-legend .sw.mid{background:var(--green);}
-.lm-heatmap-legend .sw.hi{background:var(--orange);}
+.lm-heatmap-legend .sw.hi{background:#0a0f1c;border:1px solid #2b3446;}
 .lm-heatmap-legend .flag-legend{padding-left:4px;border-left:1px solid var(--border2);margin-left:4px;color:var(--red);font-weight:600;}
+.lm-heatmap-weekcount{font-size:11px;color:var(--dim);margin:6px 0 0;}
+.lm-heatmap-weekcount strong{color:var(--fg);}
 
 /* Progressive-overload — per-muscle summary grid */
 .lm-po-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:6px;}
@@ -1167,7 +1183,7 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
 
     <div class="card card-wide">
       <h3>Muscle group × week heatmap
-        <span class="sub">12 weeks · 9 muscle groups (Chest, Back, Biceps, Triceps, Shoulders, Abs, Quads, Hamstrings, Calves) · toggle total vs hard sets (reps &lt; 8 … &lt; 20)</span>
+        <span class="sub" id="lm-hm-sub">window follows header date filter · 9 muscle groups (Chest, Back, Biceps, Triceps, Shoulders, Abs, Quads, Hamstrings, Calves) · toggle total vs hard sets (reps &lt; 8 … &lt; 20)</span>
       </h3>
       <div class="lm-heatmap-controls">
         <div class="lm-hm-mode">
@@ -1191,16 +1207,28 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
           </div>
         </div>
       </div>
-      <div id="lm-heatmap" class="lm-heatmap">
-        <!-- populated by renderTrainingHeatmap() -->
+      <div class="lm-heatmap-weekcount" id="lm-hm-weekcount">
+        <!-- populated by renderTrainingHeatmap(): e.g. "Showing 52 weeks — scroll → for earlier weeks" -->
+      </div>
+      <div class="lm-heatmap-scroll">
+        <div id="lm-heatmap" class="lm-heatmap">
+          <!-- populated by renderTrainingHeatmap() -->
+        </div>
       </div>
       <div class="lm-heatmap-legend" id="lm-heatmap-legend">
         <span class="sw empty"></span><span>0 sets</span>
-        <span class="sw lo"></span><span>low</span>
-        <span class="sw mid"></span><span>mid</span>
-        <span class="sw hi"></span><span>high</span>
+        <span class="sw lo"></span><span>LOW · &lt;20/wk</span>
+        <span class="sw mid"></span><span>ADEQUATE · 20–25/wk</span>
+        <span class="sw hi"></span><span>HIGH · &gt;25/wk</span>
         <span class="flag-legend" id="lm-hm-flag-legend"></span>
       </div>
+    </div>
+
+    <div class="card card-wide">
+      <h3>Sets per muscle group per week
+        <span class="sub" id="lm-muscle-lines-sub">one line per muscle · same toggles + window as heatmap above</span>
+      </h3>
+      <div class="chart-wrap tall"><canvas id="ch-lm-muscle-lines"></canvas></div>
     </div>
 
     <div class="card card-wide">
@@ -1541,16 +1569,22 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
             <div class="chart-wrap tall"><canvas id="ch-lm2-hard-sets"></canvas></div>
           </div>
           <div class="card card-wide">
-            <h3>Muscle group × week heatmap <span class="sub">12 weeks · 9 muscle groups · current mode/threshold set on Lean Mass tab</span></h3>
-            <div id="lm2-heatmap" class="lm-heatmap">
-              <!-- populated by renderTrainingHeatmap('lm2-heatmap', false) -->
+            <h3>Muscle group × week heatmap <span class="sub">window follows header date filter · 9 muscle groups · current mode/threshold set on Lean Mass tab</span></h3>
+            <div class="lm-heatmap-scroll">
+              <div id="lm2-heatmap" class="lm-heatmap">
+                <!-- populated by renderTrainingHeatmap('lm2-heatmap', false) -->
+              </div>
             </div>
             <div class="lm-heatmap-legend">
               <span class="sw empty"></span><span>0 sets</span>
-              <span class="sw lo"></span><span>low</span>
-              <span class="sw mid"></span><span>mid</span>
-              <span class="sw hi"></span><span>high</span>
+              <span class="sw lo"></span><span>LOW · &lt;20/wk</span>
+              <span class="sw mid"></span><span>ADEQUATE · 20–25/wk</span>
+              <span class="sw hi"></span><span>HIGH · &gt;25/wk</span>
             </div>
+          </div>
+          <div class="card card-wide">
+            <h3>Sets per muscle group per week <span class="sub">one line per muscle · same toggles + window as heatmap above</span></h3>
+            <div class="chart-wrap tall"><canvas id="ch-lm2-muscle-lines"></canvas></div>
           </div>
         </div>
       </div>
@@ -5630,14 +5664,49 @@ function lmIsoWeekMonday(dstr){
   return d.toISOString().slice(0,10);
 }
 
-/* Rebuild {total_matrix, hard_matrix_by_max_reps} from D.hevy_sets using
- * ONLY the primary muscle of each exercise's split (INDIRECT COUNT OFF).
- * Output shape matches the server emission so renderTrainingHeatmap can
- * consume it unchanged. */
-function lmBuildDirectHeatmap(){
+/* Build the list of ISO-Monday weeks the heatmap should display, driven by
+ * CURRENT_WINDOW (the global header date filter).
+ *   CURRENT_WINDOW = 0  → all weeks back to the earliest Hevy session
+ *   CURRENT_WINDOW > 0  → trailing ceil(days/7) weeks (min 4, hard-cap 260)
+ * Always ends at the Monday of today's ISO week so "now" is the rightmost cell. */
+function lmHmActiveWeeks(){
+  const setsArr = D.hevy_sets || [];
+  const todayMon = lmIsoWeekMonday(new Date().toISOString().slice(0,10));
+  let earliest;
+  if (CURRENT_WINDOW > 0){
+    const back = Math.max(4, Math.ceil(CURRENT_WINDOW / 7));
+    const d = new Date(todayMon + 'T00:00:00');
+    d.setDate(d.getDate() - (back - 1) * 7);
+    earliest = d.toISOString().slice(0,10);
+  } else {
+    // "All" — find earliest set's Monday
+    let minDay = null;
+    for (const r of setsArr){
+      if (r && r[1] && (minDay == null || r[1] < minDay)) minDay = r[1];
+    }
+    earliest = minDay ? lmIsoWeekMonday(minDay) : todayMon;
+  }
+  const out = [];
+  let cur = new Date(earliest + 'T00:00:00');
+  const end = new Date(todayMon + 'T00:00:00');
+  // hard cap 260 weeks (~5y) to keep the grid sane
+  while (cur <= end && out.length < 260){
+    out.push(cur.toISOString().slice(0,10));
+    cur.setDate(cur.getDate() + 7);
+  }
+  return out.length ? out : [todayMon];
+}
+
+/* Rebuild {total_matrix, hard_matrix_by_max_reps} from D.hevy_sets.
+ *   mode = 'direct'   → primary muscle only (INDIRECT COUNT OFF)
+ *   mode = 'indirect' → primary 1.0 + secondary split weights (INDIRECT ON)
+ * If `weeks` is omitted we fall back to the server-prebuilt 12-week window
+ * (hm.weeks) — used only for the legacy direct-only path at boot-time for
+ * parity testing; live rendering always passes the active weeks explicitly. */
+function lmBuildHeatmap(mode, weeks){
   const t = (D.lean_mass && D.lean_mass.training) || {};
   const hm = t.heatmap || {};
-  const weeks = hm.weeks || [];
+  if (!Array.isArray(weeks) || !weeks.length) weeks = hm.weeks || [];
   const thresholds = hm.max_thresholds || [8,10,12,15,18,20];
   const weekIdx = {};
   for (let i = 0; i < weeks.length; i++) weekIdx[weeks[i]] = i;
@@ -5657,21 +5726,33 @@ function lmBuildDirectHeatmap(){
   for (const r of sets){
     if (!r || !r[1]) continue;
     const day = r[1], title = r[5], setType = r[7], reps = r[8];
-    // Mirror server _is_working_set semantics (null = working).
     if (setType != null && LM_HM_WORKING_SET_EXCLUDES.has(String(setType).toLowerCase())) continue;
     if (reps == null || reps <= 0) continue;
     const split = ex2split[title];
     if (!split) continue;
-    const primary = lmPrimaryMuscleOf(split);
-    if (!primary) continue;
-    const display = LM_HM_FINE_TO_DISPLAY[primary];
-    if (!display) continue;
     const wk = lmIsoWeekMonday(day);
     const idx = weekIdx[wk];
     if (idx == null) continue;
-    total[display][idx] += 1.0;
-    for (const x of thresholds){
-      if (reps < x) hardByThr[String(x)][display][idx] += 1.0;
+
+    if (mode === 'direct'){
+      const primary = lmPrimaryMuscleOf(split);
+      if (!primary) continue;
+      const display = LM_HM_FINE_TO_DISPLAY[primary];
+      if (!display) continue;
+      total[display][idx] += 1.0;
+      for (const x of thresholds){
+        if (reps < x) hardByThr[String(x)][display][idx] += 1.0;
+      }
+    } else {
+      // indirect: distribute each granular muscle's split weight to its display bucket
+      for (const fine in split){
+        const w = split[fine]; if (!w || w <= 0) continue;
+        const display = LM_HM_FINE_TO_DISPLAY[fine]; if (!display) continue;
+        total[display][idx] += w;
+        for (const x of thresholds){
+          if (reps < x) hardByThr[String(x)][display][idx] += w;
+        }
+      }
     }
   }
   // Round to 1dp for display parity with server.
@@ -5679,7 +5760,12 @@ function lmBuildDirectHeatmap(){
   for (const x in hardByThr){
     for (const m in hardByThr[x]) hardByThr[x][m] = hardByThr[x][m].map(v => Math.round(v * 10) / 10);
   }
-  return { total_matrix: total, hard_matrix_by_max_reps: hardByThr };
+  return { total_matrix: total, hard_matrix_by_max_reps: hardByThr, weeks };
+}
+
+/* Kept for backwards-compat — legacy callers might reference this function. */
+function lmBuildDirectHeatmap(){
+  return lmBuildHeatmap('direct');
 }
 
 /* Progressive-overload client-side filter threshold (min sets in last 4 weeks).
@@ -5694,8 +5780,11 @@ function renderTrainingHeatmap(hostId, syncControls){
   const hm = t.heatmap; if (!hm) return;
   const host = document.getElementById(hostId); if (!host) return;
 
-  const weeks = hm.weeks || [];
-  const muscles = hm.muscles || [];
+  // Weeks now come from the header date window (CURRENT_WINDOW) rather than the
+  // server's fixed 12-week hm.weeks. We rebuild both direct + indirect matrices
+  // client-side so arbitrary week ranges work for either counting mode.
+  const weeks = lmHmActiveWeeks();
+  const muscles = (hm.muscles && hm.muscles.length) ? hm.muscles : LM_HM_DISPLAY_MUSCLES.slice();
   const mode = LM_HM_MODE;
   const thresholds = hm.max_thresholds || [8,10,12,15,18,20];
   // Snap LM_HM_THR to nearest valid threshold
@@ -5703,19 +5792,10 @@ function renderTrainingHeatmap(hostId, syncControls){
     LM_HM_THR = hm.default_max_threshold || 15;
   }
 
-  // Pick the right matrix.
-  // INDIRECT COUNT toggle: OFF → rebuild client-side from D.hevy_sets using
-  // each exercise's primary muscle only; ON → use server pre-built matrices
-  // (primary 1.0 + secondary 0.5, Hevy-style).
-  let srcTotal, srcHardByThr;
-  if (LM_HM_INDIRECT === 'off'){
-    const rebuilt = lmBuildDirectHeatmap();
-    srcTotal     = rebuilt.total_matrix;
-    srcHardByThr = rebuilt.hard_matrix_by_max_reps;
-  } else {
-    srcTotal     = hm.total_matrix || {};
-    srcHardByThr = hm.hard_matrix_by_max_reps || {};
-  }
+  // Rebuild client-side for ALL modes so we honor the dynamic weeks window.
+  const rebuilt = lmBuildHeatmap(LM_HM_INDIRECT === 'on' ? 'indirect' : 'direct', weeks);
+  const srcTotal     = rebuilt.total_matrix;
+  const srcHardByThr = rebuilt.hard_matrix_by_max_reps;
   let matrix;
   if (mode === 'hard'){
     matrix = srcHardByThr[String(LM_HM_THR)] || srcHardByThr[LM_HM_THR] || {};
@@ -5723,21 +5803,15 @@ function renderTrainingHeatmap(hostId, syncControls){
     matrix = srcTotal;
   }
 
-  // Per-muscle cell classifier. We grade each muscle against *its own*
-  // distribution — no global "8–20 is sweet spot" band, because different
-  // muscle groups have wildly different natural volumes (core vs quads).
-  const cellClass = (row, v) => {
+  // Absolute volume bands (per user 2026-04-22):
+  //   v < 20  → LOW      (red)
+  //   v ≤ 25  → ADEQUATE (green)
+  //   v > 25  → HIGH     (black)
+  // 0/null cells remain 'empty' and the <FLOOR undertrained flag still applies.
+  const cellClass = (_row, v) => {
     if (v == null || v === 0) return 'empty';
-    const positive = row.filter(x => x != null && x > 0);
-    if (positive.length < 2){
-      // Not enough data — just mark as "mid" if present.
-      return 'mid';
-    }
-    const sorted = [...positive].sort((a,b)=>a-b);
-    const q = (p) => sorted[Math.floor((sorted.length - 1) * p)];
-    const p33 = q(0.33), p66 = q(0.66);
-    if (v <= p33) return 'lo';
-    if (v <= p66) return 'mid';
+    if (v < 20) return 'lo';
+    if (v <= 25) return 'mid';
     return 'hi';
   };
 
@@ -5815,6 +5889,9 @@ function renderTrainingHeatmap(hostId, syncControls){
   }).join('');
 
   host.innerHTML = weekTickRow + rows;
+  // Set CSS custom property for dynamic grid columns + mark as "wide" so min-width kicks in.
+  host.style.setProperty('--hm-weeks', String(weeks.length));
+  host.classList.toggle('wide', weeks.length > 12);
 
   // Source caption
   const countingNote = (LM_HM_INDIRECT === 'off')
@@ -5825,11 +5902,22 @@ function renderTrainingHeatmap(hostId, syncControls){
     : `Hevy · all working sets · ${countingNote}`;
   setSource(hostId, src);
 
-  // Flag legend text — only update v.1 legend (v.2 doesn't have one)
+  // Flag legend text + week-count pill — only update v.1 legend (v.2 doesn't have one)
   if (syncControls){
     const flagLegend = document.getElementById('lm-hm-flag-legend');
     if (flagLegend){
       flagLegend.textContent = `⚠ red outline = <${floor} ${metricNoun}/wk for ${minRun}+ consecutive weeks`;
+    }
+
+    const weekCount = document.getElementById('lm-hm-weekcount');
+    if (weekCount){
+      const winLabel = (CURRENT_WINDOW > 0) ? `${CURRENT_WINDOW}-day` : 'all-time';
+      const scrollNote = weeks.length > 12 ? ' · <em>scroll sideways for earlier weeks</em>' : '';
+      weekCount.innerHTML = `Showing <strong>${weeks.length} week${weeks.length === 1 ? '' : 's'}</strong> in the ${winLabel} window${scrollNote}`;
+    }
+    const subEl = document.getElementById('lm-hm-sub');
+    if (subEl){
+      subEl.textContent = `${weeks.length} weeks · 9 muscle groups (Chest, Back, Biceps, Triceps, Shoulders, Abs, Quads, Hamstrings, Calves) · toggle total vs hard sets (reps < 8 … < 20)`;
     }
 
     // Mode/slider UI sync (v.1 controls only)
@@ -5866,6 +5954,106 @@ function renderTrainingHeatmap(hostId, syncControls){
     html = `${underDetails.length>=3?'🔴':'🟠'} Undertrained streak: <strong>${names.join(', ')}</strong> — each spent ${minRun}+ consecutive weeks below ${floor} ${metricNoun}/wk.`;
   }
   setLMInsight(hostId, {color, html});
+
+  // Pair chart: sets-per-muscle-per-week line chart. Uses the same rebuilt
+  // matrix + weeks + mode/threshold state, so all four toggles drive it too.
+  try {
+    const lineCanvasId = (hostId === 'lm2-heatmap') ? 'ch-lm2-muscle-lines' : 'ch-lm-muscle-lines';
+    renderTrainingMuscleLines(lineCanvasId, {
+      weeks, matrix, mode, threshold: LM_HM_THR, muscles: orderedMuscles,
+    });
+  } catch(e){ console.error('[LM] muscle-lines render', e); }
+}
+
+/* §02.3b — Sets per muscle group per week line chart (added 2026-04-22).
+ *
+ * Sibling of the heatmap above. One dataset per muscle (9 display muscles)
+ * sharing the same weeks[], matrix[], mode, threshold. Colors are picked from
+ * the dashboard palette so each muscle has a stable hue across tabs + toggles.
+ *
+ * Options argument is already computed by the heatmap renderer — we just plot
+ * what it hands us. This keeps the two views perfectly in sync by construction. */
+const LM_MUSCLE_LINE_COLORS = {
+  'Chest':      '#60a5fa', // blue
+  'Back':       '#34d399', // green
+  'Biceps':     '#fbbf24', // yellow
+  'Triceps':    '#fb923c', // orange
+  'Shoulders':  '#f472b6', // pink
+  'Abs':        '#c084fc', // purple
+  'Quads':      '#f87171', // red
+  'Hamstrings': '#14b8a6', // teal
+  'Calves':     '#a3a3a3', // gray
+};
+function renderTrainingMuscleLines(canvasId, opts){
+  canvasId = canvasId || 'ch-lm-muscle-lines';
+  destroyChart(canvasId);
+  const c = ctx(canvasId); if (!c) return;
+  const { weeks, matrix, mode, threshold, muscles } = opts || {};
+  if (!Array.isArray(weeks) || !weeks.length || !matrix) return;
+
+  const metricNoun = (mode === 'hard')
+    ? `hard sets (reps < ${threshold})`
+    : 'total sets';
+
+  const labels = weeks.map(fmtMonday);
+  const muscleList = (Array.isArray(muscles) && muscles.length)
+    ? muscles
+    : LM_HM_DISPLAY_MUSCLES.slice();
+
+  const datasets = muscleList.map(m => {
+    const color = LM_MUSCLE_LINE_COLORS[m] || '#8892a4';
+    return {
+      label: m,
+      data: (matrix[m] || []).map(v => (v == null ? 0 : v)),
+      borderColor: color,
+      backgroundColor: color + '22',
+      borderWidth: 1.8,
+      tension: 0.25,
+      pointRadius: 2,
+      pointHoverRadius: 4,
+      fill: false,
+      order: 2,
+    };
+  });
+  // Horizontal reference lines for the 20 (adequate) + 25 (high) bands — same
+  // thresholds as the heatmap color bands, so the two views read together.
+  datasets.push({
+    label: 'Adequate threshold (20/wk)',
+    data: new Array(labels.length).fill(20),
+    borderColor: '#34d39988', borderWidth: 1, borderDash: [4,4],
+    pointRadius: 0, tension: 0, fill: false, order: 10,
+  });
+  datasets.push({
+    label: 'High threshold (25/wk)',
+    data: new Array(labels.length).fill(25),
+    borderColor: '#e8ecf488', borderWidth: 1, borderDash: [4,4],
+    pointRadius: 0, tension: 0, fill: false, order: 10,
+  });
+
+  CHARTS[canvasId] = new Chart(c, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { color: '#8892a4', font: { size: 11 }, boxWidth: 14, boxHeight: 3 } },
+        tooltip: {
+          callbacks: {
+            title: (items) => items.length ? `Week of ${weeks[items[0].dataIndex]}` : '',
+            label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} ${metricNoun}/wk`,
+          },
+        },
+        datalabels: { display: false },
+      },
+      scales: {
+        x: { ticks: { color: '#8892a4', font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 16 }, grid: { color: '#1a2030' } },
+        y: { beginAtZero: true, ticks: { color: '#8892a4', font: { size: 10 } }, grid: { color: '#1a2030' },
+             title: { display: true, text: metricNoun, color: '#8892a4', font: { size: 11 } } },
+      },
+    },
+  });
+  setSource(canvasId, `Hevy · same window + toggles as heatmap above · 9 muscle groups`);
 }
 
 function _onHeatmapModeChange(e){
