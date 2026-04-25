@@ -21,7 +21,11 @@ header{padding:18px 28px 6px;display:flex;align-items:baseline;gap:14px;flex-wra
 header h1{font-size:22px;font-weight:700;color:#fff;}
 header .subtitle{font-size:12px;color:var(--dim);}
 header .generated{font-size:11px;color:var(--muted);margin-left:auto;}
-.window-bar{display:flex;align-items:center;gap:8px;padding:4px 28px 10px;}
+/* Date-range selector — sticky to the top of the viewport so it remains
+ * accessible while scrolling through long tabs. We also need the bar to have
+ * an opaque background (otherwise card content would show through it) and a
+ * thin bottom border to visually separate from the scrolling page below. */
+.window-bar{display:flex;align-items:center;gap:8px;padding:8px 28px 10px;position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);backdrop-filter:saturate(120%) blur(4px);}
 .window-bar .lbl{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;margin-right:4px;}
 .window-bar button{background:var(--card);border:1px solid var(--border);color:var(--dim);padding:4px 12px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;}
 .window-bar button:hover{color:var(--text);}
@@ -525,13 +529,15 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
 .lm-heatmap .cells{display:grid;grid-template-columns:repeat(var(--hm-weeks),minmax(var(--hm-cell-min),1fr));gap:2px;}
 .lm-heatmap .cell{height:26px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#0a0f1c;font-weight:600;font-size:10.5px;cursor:default;position:relative;}
 .lm-heatmap .cell.empty{background:var(--card2);color:var(--dim);font-weight:400;}
-/* Absolute volume bands (per user 2026-04-22):
- *   LOW      — v < 20          → RED
- *   ADEQUATE — 20 ≤ v ≤ 25      → GREEN
- *   HIGH     — v > 25           → BLACK
- * Bands apply uniformly across muscles (replaces the old per-muscle quantile
- * coloring so inter-muscle comparison is meaningful at a glance). */
+/* Per-muscle volume bands (per user 2026-04-23) — based on Renaissance
+ * Periodization (Mike Israetel) MEV/MAV/MRV framework for intermediate
+ * lifters. Each muscle has its own thresholds (see LM_HM_VOLUME_BANDS in JS).
+ *   .lo   — INSUFFICIENT (v < MEV)     RED
+ *   .warn — BUILDING (MEV ≤ v < MAV)   YELLOW
+ *   .mid  — OPTIMAL (MAV ≤ v ≤ MRV)    GREEN
+ *   .hi   — TOO MUCH (v > MRV)         BLACK (junk / overreaching) */
 .lm-heatmap .cell.lo{background:var(--red);color:#1a0505;}
+.lm-heatmap .cell.warn{background:var(--yellow);color:#1a1305;}
 .lm-heatmap .cell.mid{background:var(--green);color:#0a140a;}
 .lm-heatmap .cell.hi{background:#0a0f1c;color:#e8ecf4;box-shadow:inset 0 0 0 1px #2b3446;}
 .lm-heatmap .cell.under{box-shadow:inset 0 0 0 1.5px var(--red);}
@@ -543,6 +549,7 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
 .lm-heatmap-legend .sw{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:4px;vertical-align:middle;}
 .lm-heatmap-legend .sw.empty{background:var(--card2);}
 .lm-heatmap-legend .sw.lo{background:var(--red);}
+.lm-heatmap-legend .sw.warn{background:var(--yellow);}
 .lm-heatmap-legend .sw.mid{background:var(--green);}
 .lm-heatmap-legend .sw.hi{background:#0a0f1c;border:1px solid #2b3446;}
 .lm-heatmap-legend .flag-legend{padding-left:4px;border-left:1px solid var(--border2);margin-left:4px;color:var(--red);font-weight:600;}
@@ -1279,10 +1286,14 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
       </div>
       <div class="lm-heatmap-legend" id="lm-heatmap-legend">
         <span class="sw empty"></span><span>0 sets</span>
-        <span class="sw lo"></span><span>LOW · &lt;20/wk</span>
-        <span class="sw mid"></span><span>ADEQUATE · 20–25/wk</span>
-        <span class="sw hi"></span><span>HIGH · &gt;25/wk</span>
+        <span class="sw lo"></span><span>INSUFFICIENT</span>
+        <span class="sw warn"></span><span>BUILDING</span>
+        <span class="sw mid"></span><span>OPTIMAL</span>
+        <span class="sw hi"></span><span>TOO MUCH</span>
         <span class="flag-legend" id="lm-hm-flag-legend"></span>
+      </div>
+      <div class="lm-heatmap-weekcount" style="margin-top:6px;font-size:10.5px;line-height:1.5;">
+        Bands are <strong>per-muscle</strong> · based on Renaissance Periodization MEV/MAV/MRV ranges for intermediate lifters · hover any cell for that muscle's specific range.
       </div>
     </div>
 
@@ -1650,9 +1661,10 @@ table.fresh td{padding:10px 8px;border-bottom:1px solid var(--border);}
             </div>
             <div class="lm-heatmap-legend">
               <span class="sw empty"></span><span>0 sets</span>
-              <span class="sw lo"></span><span>LOW · &lt;20/wk</span>
-              <span class="sw mid"></span><span>ADEQUATE · 20–25/wk</span>
-              <span class="sw hi"></span><span>HIGH · &gt;25/wk</span>
+              <span class="sw lo"></span><span>INSUFFICIENT</span>
+              <span class="sw warn"></span><span>BUILDING</span>
+              <span class="sw mid"></span><span>OPTIMAL</span>
+              <span class="sw hi"></span><span>TOO MUCH</span>
             </div>
           </div>
           <div class="card card-wide">
@@ -5817,6 +5829,56 @@ let LM_HM_INDIRECT = 'off'; // 'on' = Hevy-style primary 1.0 + secondary 0.5,
  * "INDIRECT COUNT OFF" rebuild; the ON path still uses server-prebuilt
  * matrices. Keep the keys/values in sync if the server constant changes. */
 const LM_HM_DISPLAY_MUSCLES = ['Chest','Back','Biceps','Triceps','Shoulders','Abs','Quads','Hamstrings','Calves'];
+
+/* Per-muscle weekly working-set bands for an INTERMEDIATE lifter.
+ * Source: Renaissance Periodization (Mike Israetel) MEV/MAV/MRV framework,
+ * cross-referenced with Schoenfeld dose-response meta-analyses.
+ *
+ *   mev      = Minimum Effective Volume (below this → not enough stimulus)
+ *   mavLow   = Lower bound of the productive sweet-spot
+ *   mrv      = Maximum Recoverable Volume (above this → junk volume / risk)
+ *
+ * Bands derived from these three numbers:
+ *   v < mev               → INSUFFICIENT (red)
+ *   mev ≤ v < mavLow      → BUILDING (yellow)
+ *   mavLow ≤ v ≤ mrv      → OPTIMAL (green)
+ *   v > mrv               → TOO MUCH (black)
+ *
+ * Quads/Hamstrings/Calves use a tighter optimal range (10–15) per user
+ * 2026-04-23 — leg work counts hard sets across compound + accessory and
+ * tends to plateau in the 10–15 range for intermediate lifters.
+ *
+ * Fallback (any unknown muscle): 8 / 12 / 22 — a generic "medium-large
+ * muscle" range. */
+const LM_HM_VOLUME_BANDS = {
+  'Chest':      { mev: 8,  mavLow: 12, mrv: 22 },
+  'Back':       { mev: 10, mavLow: 14, mrv: 25 },
+  'Biceps':     { mev: 8,  mavLow: 14, mrv: 26 },
+  'Triceps':    { mev: 6,  mavLow: 10, mrv: 18 },
+  'Shoulders':  { mev: 8,  mavLow: 16, mrv: 26 },
+  'Abs':        { mev: 4,  mavLow: 8,  mrv: 16 },
+  'Quads':      { mev: 6,  mavLow: 10, mrv: 15 },
+  'Hamstrings': { mev: 6,  mavLow: 10, mrv: 15 },
+  'Calves':     { mev: 6,  mavLow: 10, mrv: 15 },
+};
+const LM_HM_VOLUME_FALLBACK = { mev: 8, mavLow: 12, mrv: 22 };
+
+/* Classify a single (muscle, value) pair into one of 5 bands. */
+function lmHmClassify(muscle, v){
+  if (v == null || v === 0) return 'empty';
+  const b = LM_HM_VOLUME_BANDS[muscle] || LM_HM_VOLUME_FALLBACK;
+  if (v < b.mev)    return 'lo';
+  if (v < b.mavLow) return 'warn';
+  if (v <= b.mrv)   return 'mid';
+  return 'hi';
+}
+function lmHmBandLabel(cls){
+  return cls === 'lo'   ? 'insufficient'
+       : cls === 'warn' ? 'building'
+       : cls === 'mid'  ? 'optimal'
+       : cls === 'hi'   ? 'too much'
+       :                  '';
+}
 const LM_HM_AGGREGATION = {
   'Chest':      ['Chest'],
   'Back':       ['Back'],
@@ -5997,17 +6059,16 @@ function renderTrainingHeatmap(hostId, syncControls){
     matrix = srcTotal;
   }
 
-  // Absolute volume bands (per user 2026-04-22):
-  //   v < 20  → LOW      (red)
-  //   v ≤ 25  → ADEQUATE (green)
-  //   v > 25  → HIGH     (black)
-  // 0/null cells remain 'empty' and the <FLOOR undertrained flag still applies.
-  const cellClass = (_row, v) => {
-    if (v == null || v === 0) return 'empty';
-    if (v < 20) return 'lo';
-    if (v <= 25) return 'mid';
-    return 'hi';
-  };
+  // Per-muscle volume bands (per user 2026-04-23) — see LM_HM_VOLUME_BANDS.
+  // Each muscle has its own MEV/MAV/MRV thresholds so a "good week" reads
+  // green for every muscle even though Chest's optimal range (12-22) is
+  // very different from Calves' (10-15).
+  //   .lo   = INSUFFICIENT  (v < MEV)
+  //   .warn = BUILDING      (MEV ≤ v < MAV-low)
+  //   .mid  = OPTIMAL       (MAV-low ≤ v ≤ MRV)
+  //   .hi   = TOO MUCH      (v > MRV — junk volume / overreaching)
+  // Pass the muscle name so the helper can look up its band.
+  const cellClass = (muscle, v) => lmHmClassify(muscle, v);
 
   // Undertrained-consecutive-weeks flag, applied ONLY when the user is viewing
   // total-sets mode. In hard-sets mode the <10 floor applies too (spec: "any
@@ -6068,16 +6129,19 @@ function renderTrainingHeatmap(hostId, syncControls){
 
   const rows = orderedMuscles.map(m => {
     const series = matrix[m] || [];
+    const band = LM_HM_VOLUME_BANDS[m] || LM_HM_VOLUME_FALLBACK;
+    const rangeNote = `Optimal ${band.mavLow}-${band.mrv}/wk · MEV ${band.mev} · MRV ${band.mrv}`;
     const cells = series.map((v,i) => {
-      const cls = cellClass(series, v);
+      const cls = cellClass(m, v);
       const under = flaggedCells.get(m)?.has(i);
       const txt = v == null || v === 0 ? '' : (v % 1 === 0 ? String(v) : v.toFixed(1));
-      const tip = `${m} · ${weeks[i]} · ${v ?? 0} ${metricNoun}`;
+      const bandLbl = lmHmBandLabel(cls);
+      const tip = `${m} · ${weeks[i]} · ${v ?? 0} ${metricNoun}${bandLbl ? ' · ' + bandLbl : ''}\n${rangeNote}`;
       return `<div class="cell ${cls}${under?' under':''}" title="${tip}">${txt}</div>`;
     }).join('');
     const flagged = flaggedMuscles.has(m) ? ' flagged' : '';
     return `<div class="row">
-              <div class="row-label${flagged}">${m}</div>
+              <div class="row-label${flagged}" title="${rangeNote}">${m}</div>
               <div class="cells">${cells}</div>
             </div>`;
   }).join('');
@@ -6209,20 +6273,10 @@ function renderTrainingMuscleLines(canvasId, opts){
       order: 2,
     };
   });
-  // Horizontal reference lines for the 20 (adequate) + 25 (high) bands — same
-  // thresholds as the heatmap color bands, so the two views read together.
-  datasets.push({
-    label: 'Adequate threshold (20/wk)',
-    data: new Array(labels.length).fill(20),
-    borderColor: '#34d39988', borderWidth: 1, borderDash: [4,4],
-    pointRadius: 0, tension: 0, fill: false, order: 10,
-  });
-  datasets.push({
-    label: 'High threshold (25/wk)',
-    data: new Array(labels.length).fill(25),
-    borderColor: '#e8ecf488', borderWidth: 1, borderDash: [4,4],
-    pointRadius: 0, tension: 0, fill: false, order: 10,
-  });
+  // No reference lines: bands are now per-muscle, so a single horizontal line
+  // would be misleading. The companion heatmap above shows each muscle's
+  // band-color directly. (Previous build had dashed lines at 20 + 25 from the
+  // legacy uniform-bands era — removed 2026-04-23.)
 
   CHARTS[canvasId] = new Chart(c, {
     type: 'line',
@@ -12489,15 +12543,35 @@ renderAll();
 /* ════════════ Lean Mass collapsible sections (added 2026-04-23) ════════════
  * Wires up click-to-toggle for every .lm-collapsible[data-lm-section] in the
  * Lean Mass tab. Persists collapsed state to localStorage so the next visit
- * remembers the user's preferences. Default: all sections expanded.
+ * remembers the user's preferences.
+ *
+ * DEFAULT (per user 2026-04-23): all sections COLLAPSED on first visit. We
+ * detect "first visit" as the absence of the localStorage key (not an empty
+ * array, which means "user expanded all"). On first visit we seed the storage
+ * with every section ID so the page boots clean. After that the user's
+ * explicit choices win.
  *
  * Click handler ignores clicks landing on interactive children (buttons,
  * inputs, anchors) so a user clicking a header-level toggle button (e.g. the
  * combined chart period toggle) doesn't accidentally fold the section. */
 const LM_COLLAPSED_KEY = 'lm_sections_collapsed_v1';
+function _lmAllSectionIds(){
+  return [...document.querySelectorAll('#tab-leanmass .lm-collapsible[data-lm-section]')]
+    .map(el => el.getAttribute('data-lm-section'));
+}
 function _lmReadCollapsed(){
-  try { return new Set(JSON.parse(localStorage.getItem(LM_COLLAPSED_KEY) || '[]')); }
-  catch(_){ return new Set(); }
+  // Returns Set of collapsed section IDs. If the key is MISSING (vs. set to
+  // an empty array), we seed it with every section so the default is
+  // "all collapsed". An explicit `[]` means the user clicked Expand all.
+  try {
+    const raw = localStorage.getItem(LM_COLLAPSED_KEY);
+    if (raw == null){
+      const all = _lmAllSectionIds();
+      _lmWriteCollapsed(new Set(all));
+      return new Set(all);
+    }
+    return new Set(JSON.parse(raw) || []);
+  } catch(_){ return new Set(); }
 }
 function _lmWriteCollapsed(set){
   try { localStorage.setItem(LM_COLLAPSED_KEY, JSON.stringify([...set])); }
