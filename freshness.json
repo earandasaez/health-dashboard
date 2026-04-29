@@ -1,0 +1,256 @@
+{
+  "generated_at": "2026-04-28T20:43:13-06:00",
+  "today": "2026-04-28",
+  "overall": "ok",
+  "sources": [
+    {
+      "emoji": "\ud83c\udfc3",
+      "name": "Apple Health \u2013 daily metrics",
+      "source": "Health Auto Export",
+      "table": "apple_health_daily",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83c\udfc3",
+      "name": "Apple Health \u2013 workouts",
+      "source": "Health Auto Export",
+      "table": "apple_health_workouts",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\ude34",
+      "name": "Apple Health \u2013 sleep (reference)",
+      "source": "Health Auto Export",
+      "table": "apple_health_sleep",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc9c",
+      "name": "Whoop \u2013 daily recovery",
+      "source": "Whoop API",
+      "table": "daily_recovery",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc9c",
+      "name": "Whoop \u2013 sleep",
+      "source": "Whoop API",
+      "table": "whoop_sleep",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc9c",
+      "name": "Whoop \u2013 workouts",
+      "source": "Whoop API",
+      "table": "workouts",
+      "datecol": "date",
+      "cadence": "ad-hoc",
+      "latest": "2026-04-27",
+      "days_since": 1,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc8d",
+      "name": "Oura \u2013 readiness",
+      "source": "Oura API",
+      "table": "oura_readiness",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc8d",
+      "name": "Oura \u2013 sleep score",
+      "source": "Oura API",
+      "table": "oura_daily_sleep",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc8d",
+      "name": "Oura \u2013 sleep durations",
+      "source": "Oura API",
+      "table": "apple_health_sleep",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc8d",
+      "name": "Oura \u2013 activity",
+      "source": "Oura API",
+      "table": "oura_daily_activity",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-27",
+      "days_since": 1,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc8d",
+      "name": "Oura \u2013 SpO\u2082",
+      "source": "Oura API",
+      "table": "oura_daily_spo2",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc8d",
+      "name": "Oura \u2013 stress",
+      "source": "Oura API",
+      "table": "oura_daily_stress",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc8d",
+      "name": "Oura \u2013 resilience",
+      "source": "Oura API",
+      "table": "oura_daily_resilience",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc8d",
+      "name": "Oura \u2013 VO\u2082 max",
+      "source": "Oura API",
+      "table": "oura_vo2_max",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-27",
+      "days_since": 1,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udc8d",
+      "name": "Oura \u2013 cardiovascular age",
+      "source": "Oura API",
+      "table": "oura_cardiovascular_age",
+      "datecol": "date",
+      "cadence": "quarterly",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "quarterly_ok"
+    },
+    {
+      "emoji": "\ud83d\udcaa",
+      "name": "Hevy \u2013 sessions",
+      "source": "Hevy API",
+      "table": "hevy_sessions",
+      "datecol": "day",
+      "cadence": "per workout",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83d\udcaa",
+      "name": "Hevy \u2013 sets",
+      "source": "Hevy API",
+      "table": "hevy_sets",
+      "datecol": "day",
+      "cadence": "per workout",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83e\udd57",
+      "name": "Lose It! \u2013 nutrition daily",
+      "source": "Lose It! MCP",
+      "table": "nutrition_daily",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-27",
+      "days_since": 1,
+      "status": "green"
+    },
+    {
+      "emoji": "\ud83e\udd57",
+      "name": "Lose It! \u2013 micronutrients",
+      "source": "Lose It CSV",
+      "table": "nutrition_micronutrients",
+      "datecol": "date",
+      "cadence": "daily",
+      "latest": "2026-04-28",
+      "days_since": 0,
+      "status": "green"
+    },
+    {
+      "emoji": "\u2696\ufe0f",
+      "name": "DEXA scans",
+      "source": "DEXA PDF",
+      "table": "dexa_scans",
+      "datecol": "scan_date",
+      "cadence": "quarterly",
+      "latest": "2026-04-17",
+      "days_since": 11,
+      "status": "quarterly_ok"
+    },
+    {
+      "emoji": "\ud83e\ude78",
+      "name": "Blood tests",
+      "source": "Lab PDF",
+      "table": "blood_tests",
+      "datecol": "test_date",
+      "cadence": "quarterly",
+      "latest": "2026-04-08",
+      "days_since": 20,
+      "status": "quarterly_ok"
+    },
+    {
+      "emoji": "\ud83d\udecf\ufe0f",
+      "name": "Eight Sleep \u2013 bed temp",
+      "source": "Eight Sleep (pending)",
+      "table": null,
+      "datecol": null,
+      "cadence": "daily",
+      "latest": null,
+      "days_since": null,
+      "status": "pending"
+    }
+  ],
+  "sync": {
+    "fix_and_migrate_exit": 0,
+    "sync_all_exit": 0,
+    "run_started": "Sat Apr 25 07:43:42 CST 2026",
+    "run_finished": "Sat Apr 25 07:44:01 CST 2026",
+    "error_excerpt": []
+  }
+}
