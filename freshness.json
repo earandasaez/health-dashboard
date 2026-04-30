@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-04-29T17:59:46-06:00",
-  "build_id": "e3fcda95-6d0f-42d6-b8f6-a61714123ad0",
+  "generated_at": "2026-04-29T18:01:03-06:00",
+  "build_id": "48eaf871-1f2e-481f-a8bc-038f1b933ae3",
   "today": "2026-04-29",
   "overall": "warn",
   "sources": [
@@ -254,7 +254,8 @@
     "run_finished": "Sat Apr 25 07:44:01 CST 2026",
     "error_excerpt": [
       "[2026-04-29 17:59:46]     Traceback (most recent call last):",
-      "[2026-04-29 17:59:46] \u274c  rebuild_dashboard.py failed (exit 1)"
+      "[2026-04-29 17:59:46] \u274c  rebuild_dashboard.py failed (exit 1)",
+      "\u2022 [2026-04-29 17:59:46] \u274c  rebuild_dashboard.py failed (exit 1)"
     ]
   }
 }
