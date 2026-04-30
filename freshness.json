@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-04-30T09:15:16-06:00",
-  "build_id": "0d9a8150-c195-4660-a26d-bd2dfc353456",
+  "generated_at": "2026-04-30T11:45:21-06:00",
+  "build_id": "97ee5fac-c6ba-42e3-b3da-f7a5345c1796",
   "today": "2026-04-30",
-  "overall": "warn",
+  "overall": "ok",
   "sources": [
     {
       "emoji": "\ud83c\udfc3",
@@ -198,9 +198,9 @@
       "table": "nutrition_daily",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-04-27",
-      "days_since": 3,
-      "status": "yellow"
+      "latest": "2026-04-30",
+      "days_since": 0,
+      "status": "green"
     },
     {
       "emoji": "\ud83e\udd57",
