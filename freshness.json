@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-04-30T11:45:44-06:00",
-  "build_id": "b039630d-c431-404e-9934-057773af6754",
+  "generated_at": "2026-04-30T15:15:53-06:00",
+  "build_id": "0642843a-c79f-4ae1-b28a-4f38d4ce5df1",
   "today": "2026-04-30",
   "overall": "ok",
   "sources": [
@@ -176,8 +176,8 @@
       "table": "hevy_sessions",
       "datecol": "day",
       "cadence": "per workout",
-      "latest": "2026-04-29",
-      "days_since": 1,
+      "latest": "2026-04-30",
+      "days_since": 0,
       "status": "green"
     },
     {
@@ -187,8 +187,8 @@
       "table": "hevy_sets",
       "datecol": "day",
       "cadence": "per workout",
-      "latest": "2026-04-29",
-      "days_since": 1,
+      "latest": "2026-04-30",
+      "days_since": 0,
       "status": "green"
     },
     {
