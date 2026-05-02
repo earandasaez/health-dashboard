@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-01T09:15:20-06:00",
-  "build_id": "2cd5ca15-ef63-496f-ae53-fa6d7b80d7e1",
+  "generated_at": "2026-05-01T22:12:31-06:00",
+  "build_id": "809d7daf-20bd-478f-9d32-f774d13cf817",
   "today": "2026-05-01",
   "overall": "ok",
   "sources": [
@@ -176,8 +176,8 @@
       "table": "hevy_sessions",
       "datecol": "day",
       "cadence": "per workout",
-      "latest": "2026-04-30",
-      "days_since": 1,
+      "latest": "2026-05-01",
+      "days_since": 0,
       "status": "green"
     },
     {
@@ -187,8 +187,8 @@
       "table": "hevy_sets",
       "datecol": "day",
       "cadence": "per workout",
-      "latest": "2026-04-30",
-      "days_since": 1,
+      "latest": "2026-05-01",
+      "days_since": 0,
       "status": "green"
     },
     {
@@ -198,8 +198,8 @@
       "table": "nutrition_daily",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-04-30",
-      "days_since": 1,
+      "latest": "2026-05-01",
+      "days_since": 0,
       "status": "green"
     },
     {
@@ -209,8 +209,8 @@
       "table": "nutrition_micronutrients",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-04-30",
-      "days_since": 1,
+      "latest": "2026-05-01",
+      "days_since": 0,
       "status": "green"
     },
     {
