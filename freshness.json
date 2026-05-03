@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-02T11:05:19-06:00",
-  "build_id": "d9d5d112-2e64-42f8-8694-e7e20cfb2b06",
-  "today": "2026-05-02",
+  "generated_at": "2026-05-03T07:28:37-07:00",
+  "build_id": "d45d7e62-4a53-4e43-b42b-f67d4823777c",
+  "today": "2026-05-03",
   "overall": "ok",
   "sources": [
     {
@@ -11,7 +11,7 @@
       "table": "apple_health_daily",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -23,7 +23,7 @@
       "datecol": "date",
       "cadence": "daily",
       "latest": "2026-05-02",
-      "days_since": 0,
+      "days_since": 1,
       "status": "green"
     },
     {
@@ -33,7 +33,7 @@
       "table": "apple_health_sleep",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -44,7 +44,7 @@
       "table": "daily_recovery",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -55,7 +55,7 @@
       "table": "whoop_sleep",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -66,7 +66,7 @@
       "table": "workouts",
       "datecol": "date",
       "cadence": "ad-hoc",
-      "latest": "2026-05-01",
+      "latest": "2026-05-02",
       "days_since": 1,
       "status": "green"
     },
@@ -77,7 +77,7 @@
       "table": "oura_readiness",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -88,7 +88,7 @@
       "table": "oura_daily_sleep",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -99,7 +99,7 @@
       "table": "apple_health_sleep",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -110,7 +110,7 @@
       "table": "oura_daily_activity",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-01",
+      "latest": "2026-05-02",
       "days_since": 1,
       "status": "green"
     },
@@ -121,7 +121,7 @@
       "table": "oura_daily_spo2",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -132,7 +132,7 @@
       "table": "oura_daily_stress",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -143,7 +143,7 @@
       "table": "oura_daily_resilience",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "green"
     },
@@ -154,7 +154,7 @@
       "table": "oura_vo2_max",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-01",
+      "latest": "2026-05-02",
       "days_since": 1,
       "status": "green"
     },
@@ -165,7 +165,7 @@
       "table": "oura_cardiovascular_age",
       "datecol": "date",
       "cadence": "quarterly",
-      "latest": "2026-05-02",
+      "latest": "2026-05-03",
       "days_since": 0,
       "status": "quarterly_ok"
     },
@@ -177,7 +177,7 @@
       "datecol": "day",
       "cadence": "per workout",
       "latest": "2026-05-01",
-      "days_since": 1,
+      "days_since": 2,
       "status": "green"
     },
     {
@@ -188,7 +188,7 @@
       "datecol": "day",
       "cadence": "per workout",
       "latest": "2026-05-01",
-      "days_since": 1,
+      "days_since": 2,
       "status": "green"
     },
     {
@@ -199,7 +199,7 @@
       "datecol": "date",
       "cadence": "daily",
       "latest": "2026-05-02",
-      "days_since": 0,
+      "days_since": 1,
       "status": "green"
     },
     {
@@ -210,7 +210,7 @@
       "datecol": "date",
       "cadence": "daily",
       "latest": "2026-05-02",
-      "days_since": 0,
+      "days_since": 1,
       "status": "green"
     },
     {
@@ -221,7 +221,7 @@
       "datecol": "scan_date",
       "cadence": "quarterly",
       "latest": "2026-04-17",
-      "days_since": 15,
+      "days_since": 16,
       "status": "quarterly_ok"
     },
     {
@@ -232,7 +232,7 @@
       "datecol": "test_date",
       "cadence": "quarterly",
       "latest": "2026-04-08",
-      "days_since": 24,
+      "days_since": 25,
       "status": "quarterly_ok"
     },
     {
