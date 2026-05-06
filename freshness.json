@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-05T08:02:55-07:00",
-  "build_id": "2623746a-d7c1-45dd-ae18-57e80dcd03ac",
-  "today": "2026-05-05",
-  "overall": "warn",
+  "generated_at": "2026-05-06T09:38:13-07:00",
+  "build_id": "7a634e7c-7642-4a05-a69e-db695b48c31a",
+  "today": "2026-05-06",
+  "overall": "fail",
   "sources": [
     {
       "emoji": "\ud83c\udfc3",
@@ -11,7 +11,7 @@
       "table": "apple_health_daily",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-05",
+      "latest": "2026-05-06",
       "days_since": 0,
       "status": "green"
     },
@@ -22,7 +22,7 @@
       "table": "apple_health_workouts",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-04",
+      "latest": "2026-05-05",
       "days_since": 1,
       "status": "green"
     },
@@ -33,7 +33,7 @@
       "table": "apple_health_sleep",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-05",
+      "latest": "2026-05-06",
       "days_since": 0,
       "status": "green"
     },
@@ -45,7 +45,7 @@
       "datecol": "date",
       "cadence": "daily",
       "latest": "2026-05-03",
-      "days_since": 2,
+      "days_since": 3,
       "status": "yellow"
     },
     {
@@ -56,7 +56,7 @@
       "datecol": "date",
       "cadence": "daily",
       "latest": "2026-05-03",
-      "days_since": 2,
+      "days_since": 3,
       "status": "yellow"
     },
     {
@@ -67,7 +67,7 @@
       "datecol": "date",
       "cadence": "ad-hoc",
       "latest": "2026-05-02",
-      "days_since": 3,
+      "days_since": 4,
       "status": "green"
     },
     {
@@ -77,7 +77,7 @@
       "table": "oura_readiness",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-05",
+      "latest": "2026-05-06",
       "days_since": 0,
       "status": "green"
     },
@@ -88,7 +88,7 @@
       "table": "oura_daily_sleep",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-05",
+      "latest": "2026-05-06",
       "days_since": 0,
       "status": "green"
     },
@@ -99,7 +99,7 @@
       "table": "apple_health_sleep",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-05",
+      "latest": "2026-05-06",
       "days_since": 0,
       "status": "green"
     },
@@ -110,7 +110,7 @@
       "table": "oura_daily_activity",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-04",
+      "latest": "2026-05-05",
       "days_since": 1,
       "status": "green"
     },
@@ -121,7 +121,7 @@
       "table": "oura_daily_spo2",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-05",
+      "latest": "2026-05-06",
       "days_since": 0,
       "status": "green"
     },
@@ -132,7 +132,7 @@
       "table": "oura_daily_stress",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-05",
+      "latest": "2026-05-06",
       "days_since": 0,
       "status": "green"
     },
@@ -143,7 +143,7 @@
       "table": "oura_daily_resilience",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-05",
+      "latest": "2026-05-06",
       "days_since": 0,
       "status": "green"
     },
@@ -155,8 +155,8 @@
       "datecol": "date",
       "cadence": "daily",
       "latest": "2026-05-04",
-      "days_since": 1,
-      "status": "green"
+      "days_since": 2,
+      "status": "yellow"
     },
     {
       "emoji": "\ud83d\udc8d",
@@ -165,7 +165,7 @@
       "table": "oura_cardiovascular_age",
       "datecol": "date",
       "cadence": "quarterly",
-      "latest": "2026-05-05",
+      "latest": "2026-05-06",
       "days_since": 0,
       "status": "quarterly_ok"
     },
@@ -176,8 +176,8 @@
       "table": "hevy_sessions",
       "datecol": "day",
       "cadence": "per workout",
-      "latest": "2026-05-03",
-      "days_since": 2,
+      "latest": "2026-05-05",
+      "days_since": 1,
       "status": "green"
     },
     {
@@ -187,8 +187,8 @@
       "table": "hevy_sets",
       "datecol": "day",
       "cadence": "per workout",
-      "latest": "2026-05-03",
-      "days_since": 2,
+      "latest": "2026-05-05",
+      "days_since": 1,
       "status": "green"
     },
     {
@@ -199,8 +199,8 @@
       "datecol": "date",
       "cadence": "daily",
       "latest": "2026-05-02",
-      "days_since": 3,
-      "status": "yellow"
+      "days_since": 4,
+      "status": "red"
     },
     {
       "emoji": "\ud83e\udd57",
@@ -209,7 +209,7 @@
       "table": "nutrition_micronutrients",
       "datecol": "date",
       "cadence": "daily",
-      "latest": "2026-05-04",
+      "latest": "2026-05-05",
       "days_since": 1,
       "status": "green"
     },
@@ -221,7 +221,7 @@
       "datecol": "scan_date",
       "cadence": "quarterly",
       "latest": "2026-04-17",
-      "days_since": 18,
+      "days_since": 19,
       "status": "quarterly_ok"
     },
     {
@@ -232,7 +232,7 @@
       "datecol": "test_date",
       "cadence": "quarterly",
       "latest": "2026-04-08",
-      "days_since": 27,
+      "days_since": 28,
       "status": "quarterly_ok"
     },
     {
